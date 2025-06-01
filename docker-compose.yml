@@ -1,0 +1,159 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Shopnetic.Web/Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - postgres
+      - kafka-1
+      - kafka-2
+      - kafka-3
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Default=Host=postgres;Port=5432;Database=web_db;Username=postgres;Password=postgres
+    networks:
+      - backend
+
+  cart:
+    build:
+      context: .
+      dockerfile: Shopnetic.Cart/Dockerfile
+    ports:
+      - "5001:80"
+    depends_on:
+      - postgres
+      - kafka-1
+      - kafka-2
+      - kafka-3
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Default=Host=postgres;Port=5432;Database=cart_db;Username=postgres;Password=postgres
+    networks:
+      - backend
+
+  orders:
+    build:
+      context: .
+      dockerfile: Shopnetic.Orders/Dockerfile
+    ports:
+      - "5002:80"
+    depends_on:
+      - postgres
+      - kafka-1
+      - kafka-2
+      - kafka-3
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Default=Host=postgres;Port=5432;Database=orders_db;Username=postgres;Password=postgres
+    networks:
+      - backend
+
+  inventory:
+    build:
+      context: .
+      dockerfile: Shopnetic.Inventory/Dockerfile
+    ports:
+      - "5003:80"
+    depends_on:
+      - postgres
+      - kafka-1
+      - kafka-2
+      - kafka-3
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Default=Host=postgres;Port=5432;Database=inventory_db;Username=postgres;Password=postgres
+    networks:
+      - backend
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  kafka-1:
+    image: confluentinc/cp-kafka:7.5.0
+    hostname: kafka-1
+    container_name: kafka-1
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093
+      KAFKA_LISTENERS: INTERNAL://kafka-1:9093,EXTERNAL://kafka-1:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: INTERNAL
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-1:9093,EXTERNAL://localhost:9092
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_CLUSTER_ID: kraft-cluster
+    volumes:
+      - kafka-1-data:/var/lib/kafka/data
+    networks:
+      - backend
+
+  kafka-2:
+    image: confluentinc/cp-kafka:7.5.0
+    hostname: kafka-2
+    container_name: kafka-2
+    ports:
+      - "9094:9092"
+    environment:
+      KAFKA_NODE_ID: 2
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093
+      KAFKA_LISTENERS: INTERNAL://kafka-2:9093,EXTERNAL://kafka-2:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: INTERNAL
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-2:9093,EXTERNAL://localhost:9094
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_CLUSTER_ID: kraft-cluster
+    volumes:
+      - kafka-2-data:/var/lib/kafka/data
+    networks:
+      - backend
+
+  kafka-3:
+    image: confluentinc/cp-kafka:7.5.0
+    hostname: kafka-3
+    container_name: kafka-3
+    ports:
+      - "9096:9092"
+    environment:
+      KAFKA_NODE_ID: 3
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093
+      KAFKA_LISTENERS: INTERNAL://kafka-3:9093,EXTERNAL://kafka-3:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: INTERNAL
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-3:9093,EXTERNAL://localhost:9096
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_CLUSTER_ID: kraft-cluster
+    volumes:
+      - kafka-3-data:/var/lib/kafka/data
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+  kafka-1-data:
+  kafka-2-data:
+  kafka-3-data:
+
+networks:
+  backend:
