@@ -8,10 +8,11 @@ namespace Shopnetic.Shared.Database
         public DbSet<CartOwner> CartOwners { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductPrice> ProductPrices { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
 
         public ShopneticDbContext(DbContextOptions<ShopneticDbContext> options) : base(options)
         {
-            
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,6 +21,11 @@ namespace Shopnetic.Shared.Database
                 .HasDiscriminator<string>("CartOwnerType")
                 .HasValue<RegisteredCartOwner>("Registered")
                 .HasValue<AnonymousCartOwner>("Anonymous");
+
+            modelBuilder.Entity<Discount>()
+                .HasDiscriminator<string>("DiscountType")
+                .HasValue<ProductDiscount>("Product")
+                .HasValue<CartDiscount>("Cart");
         }
     }
 }
