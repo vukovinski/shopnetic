@@ -1,11 +1,13 @@
 using KafkaFlow;
-using Shopnetic.Shared;
 using KafkaFlow.Serializer;
 using KafkaFlow.Compressor.Gzip;
+
+using Shopnetic.Shared;
+using Shopnetic.Shared.Database;
 using Shopnetic.Shared.DomainEvents.Cart;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddShopneticDbContext(builder.Configuration);
 builder.Services.AddKafka(kafka =>
 {
     kafka.UseMicrosoftLog();

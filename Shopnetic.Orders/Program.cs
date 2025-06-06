@@ -1,41 +1,50 @@
+using KafkaFlow;
+using Shopnetic.Shared;
+using KafkaFlow.Serializer;
+using KafkaFlow.Compressor.Gzip;
+using Shopnetic.Shared.DomainEvents.Cart;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddKafka(kafka =>
+{
+    kafka.UseMicrosoftLog();
+    var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
+    if (config is default(KafkaOptions) ||
+        config.KafkaBroker1 is default(string) ||
+        config.KafkaBroker2 is default(string) ||
+        config.KafkaBroker3 is default(string))
+        throw new ApplicationException("KafkaOptions are not configured properly.");
+
+    kafka.AddCluster(cluster =>
+    {
+        cluster
+        .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
+        .AddConsumer(consumer =>
+        {
+            consumer
+            .Topic("order-events")
+            .WithGroupId("order-group")
+            .WithName("order-consumer")
+            .WithWorkersCount(1)
+            .AddMiddlewares(middlewares =>
+            {
+                middlewares.AddDecompressor<GzipMessageDecompressor>();
+                middlewares.AddDeserializer<ProtobufNetDeserializer>();
+                middlewares.AddTypedHandlers(handlers =>
+                {
+                    //handlers.WithHandlerLifetime(InstanceLifetime.Singleton)
+                    //    .AddHandler<AddToCartHandler>()
+                    //    .AddHandler<RemoveFromCartHandler>()
+                    //    .AddHandler<UpdateCartItemQuantityHandler>();
+                });
+            });
+        });
+    });
+});
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
+var bus = app.Services.CreateKafkaBus();
+await bus.StartAsync();
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+await bus.StopAsync();
