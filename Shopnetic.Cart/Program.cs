@@ -1,41 +1,77 @@
+using KafkaFlow;
+using Shopnetic.Shared;
+using KafkaFlow.Serializer;
+using KafkaFlow.Compressor.Gzip;
+using Shopnetic.Shared.DomainEvents.Cart;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddKafka(kafka =>
+{
+    kafka.UseMicrosoftLog();
+    var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
+    if (config is default(KafkaOptions) ||
+        config.KafkaBroker1 is default(string) ||
+        config.KafkaBroker2 is default(string) ||
+        config.KafkaBroker3 is default(string))
+        throw new ApplicationException("KafkaOptions are not configured properly.");
+
+    kafka.AddCluster(cluster =>
+    {
+        cluster
+        .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
+        .AddConsumer(consumer =>
+        {
+            consumer
+            .Topic("cart-events")
+            .WithGroupId("cart-group")
+            .WithName("cart-consumer")
+            .WithWorkersCount(1)
+            .AddMiddlewares(middlewares =>
+            {
+                middlewares.AddDecompressor<GzipMessageDecompressor>();
+                middlewares.AddDeserializer<ProtobufNetDeserializer>();
+                middlewares.AddTypedHandlers(handlers =>
+                {
+                    handlers.WithHandlerLifetime(InstanceLifetime.Singleton)
+                        .AddHandler<AddToCartHandler>()
+                        .AddHandler<RemoveFromCartHandler>()
+                        .AddHandler<UpdateCartItemQuantityHandler>();
+                });
+            });
+        });
+    });
+});
 
 var app = builder.Build();
+var bus = app.Services.CreateKafkaBus();
+await bus.StartAsync();
+app.Run();
+await bus.StopAsync();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+internal class AddToCartHandler : IMessageHandler<CartItemAdded>
 {
-    app.MapOpenApi();
+    public Task Handle(IMessageContext context, CartItemAdded message)
+    {
+        // Handle the cart item addition logic here
+        return Task.CompletedTask;
+    }
 }
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
+internal class RemoveFromCartHandler : IMessageHandler<CartItemRemoved>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    public Task Handle(IMessageContext context, CartItemRemoved message)
+    {
+        // Handle the cart item removal logic here
+        return Task.CompletedTask;
+    }
+}
 
-app.MapGet("/weatherforecast", () =>
+internal class UpdateCartItemQuantityHandler : IMessageHandler<CartItemUpdated>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
-app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public Task Handle(IMessageContext context, CartItemUpdated message)
+    {
+        // Handle the cart item update logic here
+        return Task.CompletedTask;
+    }
 }

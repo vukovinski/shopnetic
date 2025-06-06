@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shopnetic.Inventory", "Shop
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shopnetic.Web", "Shopnetic.Web\Shopnetic.Web.csproj", "{9B8FC061-F5B1-4950-BDB7-6F4A92BE74B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shopnetic.Shared", "Shopnetic.Shared\Shopnetic.Shared.csproj", "{6C457DA7-F42A-4BEC-8824-51B5619F573C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{9B8FC061-F5B1-4950-BDB7-6F4A92BE74B0}.Release|x64.Build.0 = Release|Any CPU
 		{9B8FC061-F5B1-4950-BDB7-6F4A92BE74B0}.Release|x86.ActiveCfg = Release|Any CPU
 		{9B8FC061-F5B1-4950-BDB7-6F4A92BE74B0}.Release|x86.Build.0 = Release|Any CPU
+		{6C457DA7-F42A-4BEC-8824-51B5619F573C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C457DA7-F42A-4BEC-8824-51B5619F573C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C457DA7-F42A-4BEC-8824-51B5619F573C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6C457DA7-F42A-4BEC-8824-51B5619F573C}.Debug|x64.Build.0 = Debug|Any CPU
+		{6C457DA7-F42A-4BEC-8824-51B5619F573C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6C457DA7-F42A-4BEC-8824-51B5619F573C}.Debug|x86.Build.0 = Debug|Any CPU
+		{6C457DA7-F42A-4BEC-8824-51B5619F573C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C457DA7-F42A-4BEC-8824-51B5619F573C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C457DA7-F42A-4BEC-8824-51B5619F573C}.Release|x64.ActiveCfg = Release|Any CPU
+		{6C457DA7-F42A-4BEC-8824-51B5619F573C}.Release|x64.Build.0 = Release|Any CPU
+		{6C457DA7-F42A-4BEC-8824-51B5619F573C}.Release|x86.ActiveCfg = Release|Any CPU
+		{6C457DA7-F42A-4BEC-8824-51B5619F573C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
