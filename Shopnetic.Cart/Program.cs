@@ -12,10 +12,10 @@ builder.Services.AddKafka(kafka =>
 {
     kafka.UseMicrosoftLog();
     var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
-    if (config is default(KafkaOptions) ||
-        config.KafkaBroker1 is default(string) ||
-        config.KafkaBroker2 is default(string) ||
-        config.KafkaBroker3 is default(string))
+    if (config is null ||
+        string.IsNullOrWhiteSpace(config.KafkaBroker1) ||
+        string.IsNullOrWhiteSpace(config.KafkaBroker2) ||
+        string.IsNullOrWhiteSpace(config.KafkaBroker3))
         throw new ApplicationException("KafkaOptions are not configured properly.");
 
     kafka.AddCluster(cluster =>
@@ -35,7 +35,7 @@ builder.Services.AddKafka(kafka =>
                 middlewares.AddDeserializer<ProtobufNetDeserializer>();
                 middlewares.AddTypedHandlers(handlers =>
                 {
-                    handlers.WithHandlerLifetime(InstanceLifetime.Singleton)
+                    handlers.WithHandlerLifetime(InstanceLifetime.Transient)
                         .AddHandler<AddToCartHandler>()
                         .AddHandler<RemoveFromCartHandler>()
                         .AddHandler<UpdateCartItemQuantityHandler>();
@@ -53,6 +53,13 @@ await bus.StopAsync();
 
 internal class AddToCartHandler : IMessageHandler<CartItemAdded>
 {
+    private readonly ShopneticDbContext _dbContext;
+
+    public AddToCartHandler(ShopneticDbContext dbContext)
+    {
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    }
+
     public Task Handle(IMessageContext context, CartItemAdded message)
     {
         // Handle the cart item addition logic here
@@ -62,6 +69,13 @@ internal class AddToCartHandler : IMessageHandler<CartItemAdded>
 
 internal class RemoveFromCartHandler : IMessageHandler<CartItemRemoved>
 {
+    private readonly ShopneticDbContext _dbContext;
+
+    public RemoveFromCartHandler(ShopneticDbContext dbContext)
+    {
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    }
+
     public Task Handle(IMessageContext context, CartItemRemoved message)
     {
         // Handle the cart item removal logic here
@@ -71,6 +85,13 @@ internal class RemoveFromCartHandler : IMessageHandler<CartItemRemoved>
 
 internal class UpdateCartItemQuantityHandler : IMessageHandler<CartItemUpdated>
 {
+    private readonly ShopneticDbContext _dbContext;
+
+    public UpdateCartItemQuantityHandler(ShopneticDbContext dbContext)
+    {
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    }
+
     public Task Handle(IMessageContext context, CartItemUpdated message)
     {
         // Handle the cart item update logic here
