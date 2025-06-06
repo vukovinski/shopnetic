@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
+using System.Runtime.CompilerServices;
+
 namespace Shopnetic.Shared.Database
 {
     public class ShopneticDbContext : DbContext
@@ -9,6 +11,9 @@ namespace Shopnetic.Shared.Database
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductPrice> ProductPrices { get; set; }
         public DbSet<Discount> Discounts { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<OrderDiscount> OrderDiscounts { get; set; }
 
         public ShopneticDbContext(DbContextOptions<ShopneticDbContext> options) : base(options)
         {
