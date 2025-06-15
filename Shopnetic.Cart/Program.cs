@@ -4,6 +4,7 @@ using KafkaFlow.Compressor.Gzip;
 
 using Shopnetic.Shared;
 using Shopnetic.Shared.Database;
+using Shopnetic.Shared.DomainEvents;
 using Shopnetic.Shared.DomainEvents.Cart;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,7 +52,7 @@ await bus.StartAsync();
 app.Run();
 await bus.StopAsync();
 
-internal class AddToCartHandler : IMessageHandler<CartItemAdded>
+internal class AddToCartHandler : IMessageHandler<IntegrationEvent<CartItemAdded>>
 {
     private readonly ShopneticDbContext _dbContext;
 
@@ -60,14 +61,14 @@ internal class AddToCartHandler : IMessageHandler<CartItemAdded>
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public Task Handle(IMessageContext context, CartItemAdded message)
+    public Task Handle(IMessageContext context, IntegrationEvent<CartItemAdded> message)
     {
         // Handle the cart item addition logic here
         return Task.CompletedTask;
     }
 }
 
-internal class RemoveFromCartHandler : IMessageHandler<CartItemRemoved>
+internal class RemoveFromCartHandler : IMessageHandler<IntegrationEvent<CartItemRemoved>>
 {
     private readonly ShopneticDbContext _dbContext;
 
@@ -76,14 +77,14 @@ internal class RemoveFromCartHandler : IMessageHandler<CartItemRemoved>
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public Task Handle(IMessageContext context, CartItemRemoved message)
+    public Task Handle(IMessageContext context, IntegrationEvent<CartItemRemoved> message)
     {
         // Handle the cart item removal logic here
         return Task.CompletedTask;
     }
 }
 
-internal class UpdateCartItemQuantityHandler : IMessageHandler<CartItemUpdated>
+internal class UpdateCartItemQuantityHandler : IMessageHandler<IntegrationEvent<CartItemUpdated>>
 {
     private readonly ShopneticDbContext _dbContext;
 
@@ -92,7 +93,7 @@ internal class UpdateCartItemQuantityHandler : IMessageHandler<CartItemUpdated>
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public Task Handle(IMessageContext context, CartItemUpdated message)
+    public Task Handle(IMessageContext context, IntegrationEvent<CartItemUpdated> message)
     {
         // Handle the cart item update logic here
         return Task.CompletedTask;
