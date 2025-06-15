@@ -4,13 +4,13 @@ namespace Shopnetic.Shared.Database
 {
     public static class CartContentsExtensions
     {
-        public static CartContents Deserialize(this string cartContentsJson)
+        public static CartContents Deserialize(this Cart cart)
         {
-            if (string.IsNullOrWhiteSpace(cartContentsJson))
+            if (string.IsNullOrWhiteSpace(cart.CartContentsJson))
             {
-                throw new ArgumentException("Cart contents JSON cannot be null or empty.", nameof(cartContentsJson));
+                throw new ArgumentException("Cart contents JSON cannot be null or empty.", nameof(cart.CartContentsJson));
             }
-            return JsonSerializer.Deserialize<CartContents>(cartContentsJson) 
+            return JsonSerializer.Deserialize<CartContents>(cart.CartContentsJson) 
                    ?? throw new InvalidOperationException("Deserialized cart contents cannot be null.");
         }
 

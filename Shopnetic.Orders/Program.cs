@@ -27,6 +27,7 @@ builder.Services.AddKafka(kafka =>
             .WithGroupId("order-group")
             .WithName("order-consumer")
             .WithWorkersCount(1)
+            .WithBufferSize(1000)
             .AddMiddlewares(middlewares =>
             {
                 middlewares.AddDecompressor<GzipMessageDecompressor>();

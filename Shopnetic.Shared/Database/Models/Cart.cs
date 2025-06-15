@@ -8,6 +8,6 @@
         public required CartOwner CartOwner { get; set; }
         public required string CartContentsJson { get; set; }
 
-        public CartContents GetCartContents() => CartContentsJson.Deserialize();
+        public CartContents GetCartContents() => this.Deserialize();
     }
 }
