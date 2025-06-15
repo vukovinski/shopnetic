@@ -4,6 +4,7 @@ using KafkaFlow.Compressor.Gzip;
 
 using Shopnetic.Shared;
 using Shopnetic.Shared.Database;
+using Shopnetic.Shared.DomainEvents;
 using Shopnetic.Shared.DomainEvents.Cart;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -53,33 +54,37 @@ await bus.StartAsync();
 app.Run();
 await bus.StopAsync();
 
-internal class CartCreatedHandler : IMessageHandler<CartCreated>
+internal class AddToCartHandler : IMessageHandler<IntegrationEvent<CartItemAdded>>
 {
     public Task Handle(IMessageContext context, CartCreated message)
     {
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    }
+
+    public Task Handle(IMessageContext context, IntegrationEvent<CartItemAdded> message)
+    {
+        // Handle the cart item addition logic here
         return Task.CompletedTask;
     }
 }
 
-internal class AddToCartHandler(ShopneticDbContext dbContext) : IMessageHandler<CartItemAdded>
+internal class RemoveFromCartHandler : IMessageHandler<IntegrationEvent<CartItemRemoved>>
 {
     private readonly ShopneticDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
     public async Task Handle(IMessageContext context, CartItemAdded message)
     {
-        var cart = _dbContext.Carts.Find(message.CartId);
-        var cartContents = cart?.Deserialize();
-        if (cart is { } && cartContents is { })
-        {
-            cartContents.Items.Add(new CartItem() { ProductId = message.ProductId, Quantity = message.Quantity });
-            cart.CartContentsJson = cartContents.Serialize();
-            _dbContext.Carts.Update(cart);
-            await _dbContext.SaveChangesAsync();
-        }
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    }
+
+    public Task Handle(IMessageContext context, IntegrationEvent<CartItemRemoved> message)
+    {
+        // Handle the cart item removal logic here
+        return Task.CompletedTask;
     }
 }
 
-internal class RemoveFromCartHandler(ShopneticDbContext dbContext) : IMessageHandler<CartItemRemoved>
+internal class UpdateCartItemQuantityHandler : IMessageHandler<IntegrationEvent<CartItemUpdated>>
 {
     private readonly ShopneticDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
@@ -96,33 +101,9 @@ internal class RemoveFromCartHandler(ShopneticDbContext dbContext) : IMessageHan
                 if (item.Quantity == 0)
                     cartContents.Items.Remove(item);
 
-                cart.CartContentsJson = cartContents.Serialize();
-                _dbContext.Carts.Update(cart);
-                await _dbContext.SaveChangesAsync();
-            }
-        }
-    }
-}
-
-internal class UpdateCartItemQuantityHandler(ShopneticDbContext dbContext) : IMessageHandler<CartItemUpdated>
-{
-    private readonly ShopneticDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-
-    public async Task Handle(IMessageContext context, CartItemUpdated message)
+    public Task Handle(IMessageContext context, IntegrationEvent<CartItemUpdated> message)
     {
-        var cart = _dbContext.Carts.Find(message.CartId);
-        var cartContents = cart?.Deserialize();
-        if (cart is { } && cartContents is { })
-        {
-            var item = cartContents.Items.FirstOrDefault(i => i.ProductId == message.ProductId);
-            if (item is { })
-            {
-                item.Quantity = message.Quantity;
-
-                cart.CartContentsJson = cartContents.Serialize();
-                _dbContext.Carts.Update(cart);
-                await _dbContext.SaveChangesAsync();
-            }
-        }
+        // Handle the cart item update logic here
+        return Task.CompletedTask;
     }
 }
