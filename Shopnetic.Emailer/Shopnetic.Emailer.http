@@ -1,0 +1,6 @@
+@Shopnetic.Emailer_HostAddress = http://localhost:5283
+
+GET {{Shopnetic.Emailer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

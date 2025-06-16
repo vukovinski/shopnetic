@@ -31,12 +31,28 @@ services:
     networks:
       - backend
 
+  email:
+    build:
+      context: .
+      dockerfile: Shopnetic.Emailer/Dockerfile
+    ports:
+      - "5002:80"
+    depends_on:
+      - postgres
+      - kafka1
+      - kafka2
+      - kafka3
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - backend
+
   orders:
     build:
       context: .
       dockerfile: Shopnetic.Orders/Dockerfile
     ports:
-      - "5002:80"
+      - "5003:80"
     depends_on:
       - postgres
       - kafka1
@@ -52,7 +68,7 @@ services:
       context: .
       dockerfile: Shopnetic.Inventory/Dockerfile
     ports:
-      - "5003:80"
+      - "5004:80"
     depends_on:
       - postgres
       - kafka1

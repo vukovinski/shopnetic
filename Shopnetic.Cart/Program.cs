@@ -1,9 +1,8 @@
 using KafkaFlow;
-using KafkaFlow.Serializer;
-using KafkaFlow.Compressor.Gzip;
 
 using Shopnetic.Shared;
 using Shopnetic.Shared.Database;
+using Shopnetic.Shared.Infrastructure;
 using Shopnetic.Shared.DomainEvents;
 using Shopnetic.Shared.DomainEvents.Cart;
 
@@ -26,15 +25,13 @@ builder.Services.AddKafka(kafka =>
         .AddConsumer(consumer =>
         {
             consumer
-            .Topic("cart-events")
+            .Topic(TopicNames.Cart)
             .WithGroupId("cart-group")
-            .WithName("cart-consumer")
             .WithWorkersCount(1)
             .WithBufferSize(100)
             .AddMiddlewares(middlewares =>
             {
-                middlewares.AddDecompressor<GzipMessageDecompressor>();
-                middlewares.AddDeserializer<ProtobufNetDeserializer>();
+                middlewares.AddShopneticConsumerMiddleware();
                 middlewares.AddTypedHandlers(handlers =>
                 {
                     handlers.WithHandlerLifetime(InstanceLifetime.Transient)
@@ -44,7 +41,8 @@ builder.Services.AddKafka(kafka =>
                         .AddHandler<UpdateCartItemQuantityHandler>();
                 });
             });
-        });
+        })
+        .AddShopneticProducer(ProducerNames.CartEmailProducer, TopicNames.Email);
     });
 });
 
@@ -54,13 +52,16 @@ await bus.StartAsync();
 app.Run();
 await bus.StopAsync();
 
+internal class CartCreatedHandler : IMessageHandler<IntegrationEvent<CartCreated>>
+{
+    public Task Handle(IMessageContext context, IntegrationEvent<CartCreated> message)
+    {
+        return Task.CompletedTask;
+    }
+}
+
 internal class AddToCartHandler : IMessageHandler<IntegrationEvent<CartItemAdded>>
 {
-    public Task Handle(IMessageContext context, CartCreated message)
-    {
-        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-    }
-
     public Task Handle(IMessageContext context, IntegrationEvent<CartItemAdded> message)
     {
         // Handle the cart item addition logic here
@@ -70,13 +71,6 @@ internal class AddToCartHandler : IMessageHandler<IntegrationEvent<CartItemAdded
 
 internal class RemoveFromCartHandler : IMessageHandler<IntegrationEvent<CartItemRemoved>>
 {
-    private readonly ShopneticDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-
-    public async Task Handle(IMessageContext context, CartItemAdded message)
-    {
-        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-    }
-
     public Task Handle(IMessageContext context, IntegrationEvent<CartItemRemoved> message)
     {
         // Handle the cart item removal logic here
@@ -86,21 +80,6 @@ internal class RemoveFromCartHandler : IMessageHandler<IntegrationEvent<CartItem
 
 internal class UpdateCartItemQuantityHandler : IMessageHandler<IntegrationEvent<CartItemUpdated>>
 {
-    private readonly ShopneticDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-
-    public async Task Handle(IMessageContext context, CartItemRemoved message)
-    {
-        var cart = _dbContext.Carts.Find(message.CartId);
-        var cartContents = cart?.Deserialize();
-        if (cart is { } && cartContents is { })
-        {
-            var item = cartContents.Items.FirstOrDefault(i => i.ProductId == message.ProductId);
-            if (item is { })
-            {
-                item.Quantity -= message.Quantity;
-                if (item.Quantity == 0)
-                    cartContents.Items.Remove(item);
-
     public Task Handle(IMessageContext context, IntegrationEvent<CartItemUpdated> message)
     {
         // Handle the cart item update logic here
