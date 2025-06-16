@@ -1,9 +1,11 @@
 using KafkaFlow;
+using KafkaFlow.Producers;
+
 using Shopnetic.Shared.Database;
-using Shopnetic.Shared.DomainEvents;
-using Shopnetic.Shared.DomainEvents.Inventory;
-using Shopnetic.Shared.DomainEvents.Order;
 using Shopnetic.Shared.Infrastructure;
+using Shopnetic.Shared.DomainEvents;
+using Shopnetic.Shared.DomainEvents.Order;
+using Shopnetic.Shared.DomainEvents.Inventory;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
@@ -66,9 +68,19 @@ await bus.StopAsync();
 
 internal class OrderCreatedHandler : IMessageHandler<IntegrationEvent<OrderCreated>>
 {
+    private readonly IMessageProducer _producer;
+    private readonly ShopneticDbContext _dbContext;
+
+    public OrderCreatedHandler(IProducerAccessor producers, ShopneticDbContext dbContext)
+    {
+        _dbContext = dbContext;
+        _producer = producers[ProducerNames.InventoryOutput];
+    }
+
     public Task Handle(IMessageContext context, IntegrationEvent<OrderCreated> message)
     {
         throw new NotImplementedException();
+        // emit InventoryReserved of InventoryReservationFailed
     }
 }
 
