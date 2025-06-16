@@ -41,8 +41,7 @@ builder.Services.AddKafka(kafka =>
                         .AddHandler<UpdateCartItemQuantityHandler>();
                 });
             });
-        })
-        .AddShopneticProducer(ProducerNames.CartEmailProducer, TopicNames.Email);
+        });
     });
 });
 
