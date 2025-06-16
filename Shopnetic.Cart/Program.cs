@@ -7,17 +7,17 @@ using Shopnetic.Shared.DomainEvents;
 using Shopnetic.Shared.DomainEvents.Cart;
 
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
+if (config is null ||
+    string.IsNullOrWhiteSpace(config.KafkaBroker1) ||
+    string.IsNullOrWhiteSpace(config.KafkaBroker2) ||
+    string.IsNullOrWhiteSpace(config.KafkaBroker3))
+    throw new ApplicationException("KafkaOptions are not configured properly.");
+
 builder.Services.AddShopneticDbContext(builder.Configuration);
 builder.Services.AddKafka(kafka =>
 {
     kafka.UseMicrosoftLog();
-    var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
-    if (config is null ||
-        string.IsNullOrWhiteSpace(config.KafkaBroker1) ||
-        string.IsNullOrWhiteSpace(config.KafkaBroker2) ||
-        string.IsNullOrWhiteSpace(config.KafkaBroker3))
-        throw new ApplicationException("KafkaOptions are not configured properly.");
-
     kafka.AddCluster(cluster =>
     {
         cluster

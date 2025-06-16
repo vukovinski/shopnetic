@@ -1,22 +1,23 @@
 using KafkaFlow;
-using KafkaFlow.Serializer;
-using KafkaFlow.Compressor.Gzip;
 
 using Shopnetic.Shared;
+using Shopnetic.Shared.Database;
 using Shopnetic.Shared.DomainEvents;
+using Shopnetic.Shared.Infrastructure;
+using Shopnetic.Shared.DomainEvents.Email;
 
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
+if (config is default(KafkaOptions) ||
+    config.KafkaBroker1 is default(string) ||
+    config.KafkaBroker2 is default(string) ||
+    config.KafkaBroker3 is default(string))
+    throw new ApplicationException("KafkaOptions are not configured properly.");
 
+builder.Services.AddShopneticDbContext(builder.Configuration);
 builder.Services.AddKafka(kafka =>
 {
     kafka.UseMicrosoftLog();
-    var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
-    if (config is default(KafkaOptions) ||
-        config.KafkaBroker1 is default(string) ||
-        config.KafkaBroker2 is default(string) ||
-        config.KafkaBroker3 is default(string))
-        throw new ApplicationException("KafkaOptions are not configured properly.");
-
     kafka.AddCluster(cluster =>
     {
         cluster
@@ -24,21 +25,19 @@ builder.Services.AddKafka(kafka =>
         .AddConsumer(consumer =>
         {
             consumer
-            .Topic("email-events")
+            .Topic(TopicNames.Email)
             .WithGroupId("email-group")
-            .WithName("email-consumer")
             .WithWorkersCount(1)
             .WithBufferSize(100)
             .AddMiddlewares(middlewares =>
             {
-                middlewares.AddDecompressor<GzipMessageDecompressor>();
-                middlewares.AddDeserializer<ProtobufNetDeserializer>();
+                middlewares.AddShopneticConsumerMiddleware();
                 middlewares.AddTypedHandlers(handlers =>
                 {
-                    //handlers.WithHandlerLifetime(InstanceLifetime.Singleton)
-                    //    .AddHandler<AddToCartHandler>()
-                    //    .AddHandler<RemoveFromCartHandler>()
-                    //    .AddHandler<UpdateCartItemQuantityHandler>();
+                    handlers.WithHandlerLifetime(InstanceLifetime.Transient)
+                        .AddHandler<OrderConfirmedHandler>()
+                        .AddHandler<OrderRejectedHandler>()
+                        .AddHandler<OrderShippedHandler>();
                 });
             });
         });
@@ -50,3 +49,27 @@ var bus = app.Services.CreateKafkaBus();
 await bus.StartAsync();
 app.Run();
 await bus.StopAsync();
+
+internal class OrderConfirmedHandler : IMessageHandler<IntegrationEvent<OrderConfirmed>>
+{
+    public Task Handle(IMessageContext context, IntegrationEvent<OrderConfirmed> message)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+internal class OrderRejectedHandler : IMessageHandler<IntegrationEvent<OrderRejected>>
+{
+    public Task Handle(IMessageContext context, IntegrationEvent<OrderRejected> message)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+internal class OrderShippedHandler : IMessageHandler<IntegrationEvent<OrderShipped>>
+{
+    public Task Handle(IMessageContext context, IntegrationEvent<OrderShipped> message)
+    {
+        throw new NotImplementedException();
+    }
+}
