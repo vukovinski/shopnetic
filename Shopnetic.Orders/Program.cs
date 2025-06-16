@@ -1,21 +1,19 @@
 using KafkaFlow;
-using KafkaFlow.Serializer;
-using KafkaFlow.Compressor.Gzip;
-using Shopnetic.Shared.DomainEvents.Cart;
+
 using Shopnetic.Shared.Infrastructure;
+using Shopnetic.Shared.DomainEvents.Order;
 
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
+if (config is default(KafkaOptions) ||
+    config.KafkaBroker1 is default(string) ||
+    config.KafkaBroker2 is default(string) ||
+    config.KafkaBroker3 is default(string))
+    throw new ApplicationException("KafkaOptions are not configured properly.");
 
 builder.Services.AddKafka(kafka =>
 {
     kafka.UseMicrosoftLog();
-    var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
-    if (config is default(KafkaOptions) ||
-        config.KafkaBroker1 is default(string) ||
-        config.KafkaBroker2 is default(string) ||
-        config.KafkaBroker3 is default(string))
-        throw new ApplicationException("KafkaOptions are not configured properly.");
-
     kafka.AddCluster(cluster =>
     {
         cluster
@@ -23,15 +21,13 @@ builder.Services.AddKafka(kafka =>
         .AddConsumer(consumer =>
         {
             consumer
-            .Topic("order-events")
+            .Topic(TopicNames.Order)
             .WithGroupId("order-group")
-            .WithName("order-consumer")
             .WithWorkersCount(1)
-            .WithBufferSize(1000)
+            .WithBufferSize(100)
             .AddMiddlewares(middlewares =>
             {
-                middlewares.AddDecompressor<GzipMessageDecompressor>();
-                middlewares.AddDeserializer<ProtobufNetDeserializer>();
+                middlewares.AddShopneticConsumerMiddleware();
                 middlewares.AddTypedHandlers(handlers =>
                 {
                     //handlers.WithHandlerLifetime(InstanceLifetime.Singleton)
@@ -40,7 +36,10 @@ builder.Services.AddKafka(kafka =>
                     //    .AddHandler<UpdateCartItemQuantityHandler>();
                 });
             });
-        });
+
+            // dodati payment microservis...
+        })
+        .AddShopneticProducer(ProducerNames.OrderOutput, TopicNames.Order);
     });
 });
 

@@ -26,7 +26,7 @@ builder.Services.AddKafka(kafka =>
         .AddConsumer(consumer =>
         {
             consumer
-            .Topic(TopicNames.InventoryInput)
+            .Topic(TopicNames.Inventory)
             .WithGroupId("inventory-group")
             .WithWorkersCount(1)
             .WithBufferSize(100)
@@ -57,7 +57,7 @@ builder.Services.AddKafka(kafka =>
                 });
             });
         })
-        .AddShopneticProducer(ProducerNames.InventoryOutput, TopicNames.InventoryOutput);
+        .AddShopneticProducer(ProducerNames.InventoryOutput, TopicNames.Inventory);
     });
 });
 
