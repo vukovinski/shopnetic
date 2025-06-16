@@ -36,6 +36,7 @@ builder.Services.AddKafka(kafka =>
                 middlewares.AddTypedHandlers(handlers =>
                 {
                     handlers.WithHandlerLifetime(InstanceLifetime.Transient)
+                        .AddHandler<InventoryAdjustedHandler>()
                         .AddHandler<InventoryReleasedHandler>()
                         .AddHandler<InventoryConsumedHandler>();
                 });
@@ -95,6 +96,14 @@ internal class InventoryReleasedHandler : IMessageHandler<IntegrationEvent<Inven
 internal class InventoryConsumedHandler : IMessageHandler<IntegrationEvent<InventoryConsumed>>
 {
     public Task Handle(IMessageContext context, IntegrationEvent<InventoryConsumed> message)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+internal class InventoryAdjustedHandler : IMessageHandler<IntegrationEvent<InventoryAdjusted>>
+{
+    public Task Handle(IMessageContext context, IntegrationEvent<InventoryAdjusted> message)
     {
         throw new NotImplementedException();
     }
