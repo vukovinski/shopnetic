@@ -1,6 +1,6 @@
-﻿namespace Shopnetic.Shared.DomainEvents.Email
+﻿namespace Shopnetic.Shared.DomainEvents.Order
 {
-    public class OrderRejected
+    public class OrderConfirmed
     {
         public int OrderId { get; set; }
         public int CartId { get; set; }

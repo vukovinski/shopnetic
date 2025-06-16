@@ -1,8 +1,8 @@
 using KafkaFlow;
-using Shopnetic.Shared;
 using KafkaFlow.Serializer;
 using KafkaFlow.Compressor.Gzip;
 using Shopnetic.Shared.DomainEvents.Cart;
+using Shopnetic.Shared.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

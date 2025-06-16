@@ -1,10 +1,9 @@
 using KafkaFlow;
 
-using Shopnetic.Shared;
 using Shopnetic.Shared.Database;
 using Shopnetic.Shared.DomainEvents;
 using Shopnetic.Shared.Infrastructure;
-using Shopnetic.Shared.DomainEvents.Email;
+using Shopnetic.Shared.DomainEvents.Order;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
@@ -25,7 +24,7 @@ builder.Services.AddKafka(kafka =>
         .AddConsumer(consumer =>
         {
             consumer
-            .Topic(TopicNames.Email)
+            .Topic(TopicNames.Order)
             .WithGroupId("email-group")
             .WithWorkersCount(1)
             .WithBufferSize(100)

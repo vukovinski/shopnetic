@@ -1,6 +1,5 @@
 using KafkaFlow;
 
-using Shopnetic.Shared;
 using Shopnetic.Shared.Database;
 using Shopnetic.Shared.Infrastructure;
 using Shopnetic.Shared.DomainEvents;

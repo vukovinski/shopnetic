@@ -1,4 +1,4 @@
-﻿namespace Shopnetic.Shared
+﻿namespace Shopnetic.Shared.Infrastructure
 {
     public class KafkaOptions
     {
