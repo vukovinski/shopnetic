@@ -29,13 +29,14 @@ builder.Services.AddKafka(kafka =>
                 middlewares.AddTypedHandlers(handlers =>
                 {
                     handlers.WithHandlerLifetime(InstanceLifetime.Transient);
-                        //.AddHandler<AddToCartHandler>()
-                        //.AddHandler<CartCreatedHandler>()
-                        //.AddHandler<RemoveFromCartHandler>()
-                        //.AddHandler<UpdateCartItemQuantityHandler>();
+                    //.AddHandler<AddToCartHandler>()
+                    //.AddHandler<CartCreatedHandler>()
+                    //.AddHandler<RemoveFromCartHandler>()
+                    //.AddHandler<UpdateCartItemQuantityHandler>();
                 });
             });
-        });
+        })
+        .AddShopneticProducer(ProducerNames.PaymentsOutput, TopicNames.Order);
     });
 });
 

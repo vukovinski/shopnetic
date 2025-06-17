@@ -4,5 +4,6 @@
     {
         public const string InventoryOutput = "inventory-output";
         public const string OrderOutput = "order-output";
+        public const string PaymentsOutput = "payments-output";
     }
 }
