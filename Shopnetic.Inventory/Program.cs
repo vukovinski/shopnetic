@@ -8,12 +8,8 @@ using Shopnetic.Shared.DomainEvents.Order;
 using Shopnetic.Shared.DomainEvents.Inventory;
 
 var builder = WebApplication.CreateBuilder(args);
-var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
-if (config is default(KafkaOptions) ||
-    config.KafkaBroker1 is default(string) ||
-    config.KafkaBroker2 is default(string) ||
-    config.KafkaBroker3 is default(string))
-    throw new ApplicationException("KafkaOptions are not configured properly.");
+var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>()!;
+KafkaOptions.Validate(config);
 
 builder.Services.AddShopneticDbContext(builder.Configuration);
 builder.Services.AddKafka(kafka =>

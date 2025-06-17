@@ -1,5 +1,6 @@
 using KafkaFlow;
 
+using Shopnetic.Shared.Database;
 using Shopnetic.Shared.Infrastructure;
 using Shopnetic.Shared.DomainEvents.Order;
 
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>()!;
 KafkaOptions.Validate(config);
 
+builder.Services.AddShopneticDbContext(builder.Configuration);
 builder.Services.AddKafka(kafka =>
 {
     kafka.UseMicrosoftLog();
@@ -17,8 +19,8 @@ builder.Services.AddKafka(kafka =>
         .AddConsumer(consumer =>
         {
             consumer
-            .Topic(TopicNames.Order)
-            .WithGroupId("order-group")
+            .Topic(TopicNames.Shipping)
+            .WithGroupId("shipping-group")
             .WithWorkersCount(1)
             .WithBufferSize(100)
             .AddMiddlewares(middlewares =>
@@ -32,10 +34,7 @@ builder.Services.AddKafka(kafka =>
                     //    .AddHandler<UpdateCartItemQuantityHandler>();
                 });
             });
-
-            // dodati payment microservis...
-        })
-        .AddShopneticProducer(ProducerNames.OrderOutput, TopicNames.Order);
+        });
     });
 });
 

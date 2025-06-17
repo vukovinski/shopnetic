@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>c8ff6bb9-de96-4224-b5d0-20faeb3383d4</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="KafkaFlow" Version="4.0.0" />
+    <PackageReference Include="KafkaFlow.Compressor.Gzip" Version="4.0.0" />
+    <PackageReference Include="KafkaFlow.LogHandler.Microsoft" Version="4.0.0" />
+    <PackageReference Include="KafkaFlow.Microsoft.DependencyInjection" Version="4.0.0" />
+    <PackageReference Include="KafkaFlow.Serializer.ProtobufNet" Version="4.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1-Preview.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shopnetic.Shared\Shopnetic.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

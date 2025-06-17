@@ -1,0 +1,6 @@
+@Shopnetic.Payments_HostAddress = http://localhost:5269
+
+GET {{Shopnetic.Payments_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

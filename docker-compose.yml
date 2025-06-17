@@ -79,6 +79,38 @@ services:
     networks:
       - backend
 
+  payments:
+    build:
+      context: .
+      dockerfile: Shopnetic.Payments/Dockerfile
+    ports:
+      - "5005:80"
+    depends_on:
+      - postgres
+      - kafka1
+      - kafka2
+      - kafka3
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - backend
+
+  shipping:
+    build:
+      context: .
+      dockerfile: Shopnetic.Shipping/Dockerfile
+    ports:
+      - "5006:80"
+    depends_on:
+      - postgres
+      - kafka1
+      - kafka2
+      - kafka3
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - backend
+
   postgres:
     image: postgres:15
     container_name: postgres
