@@ -36,7 +36,7 @@ builder.Services.AddKafka(kafka =>
                 });
             });
         })
-        .AddShopneticProducer(ProducerNames.PaymentsOutput, TopicNames.Order);
+        .AddShopneticProducer(ProducerNames.PaymentsToOrderOutput, TopicNames.Order);
     });
 });
 

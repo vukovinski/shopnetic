@@ -53,7 +53,7 @@ builder.Services.AddKafka(kafka =>
                 });
             });
         })
-        .AddShopneticProducer(ProducerNames.InventoryOutput, TopicNames.Inventory);
+        .AddShopneticProducer(ProducerNames.InventoryToInventoryLoopback, TopicNames.Inventory);
     });
 });
 
@@ -71,7 +71,7 @@ internal class OrderCreatedHandler : IMessageHandler<IntegrationEvent<OrderCreat
     public OrderCreatedHandler(IProducerAccessor producers, ShopneticDbContext dbContext)
     {
         _dbContext = dbContext;
-        _producer = producers[ProducerNames.InventoryOutput];
+        _producer = producers[ProducerNames.InventoryToInventoryLoopback];
     }
 
     public Task Handle(IMessageContext context, IntegrationEvent<OrderCreated> message)

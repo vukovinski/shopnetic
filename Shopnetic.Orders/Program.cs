@@ -35,7 +35,7 @@ builder.Services.AddKafka(kafka =>
 
             // dodati payment microservis...
         })
-        .AddShopneticProducer(ProducerNames.OrderOutput, TopicNames.Order);
+        .AddShopneticProducer(ProducerNames.OrderToOrderLoopback, TopicNames.Order);
     });
 });
 
