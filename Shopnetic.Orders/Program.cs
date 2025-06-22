@@ -2,6 +2,8 @@ using KafkaFlow;
 
 using Shopnetic.Shared.Infrastructure;
 using Shopnetic.Shared.DomainEvents.Order;
+using Shopnetic.Shared.DomainEvents;
+using Shopnetic.Shared.DomainEvents.Inventory;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>()!;
@@ -32,8 +34,6 @@ builder.Services.AddKafka(kafka =>
                     //    .AddHandler<UpdateCartItemQuantityHandler>();
                 });
             });
-
-            // dodati payment microservis...
         })
         .AddShopneticProducer(ProducerNames.OrderToOrderLoopback, TopicNames.Order);
     });
