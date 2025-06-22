@@ -59,11 +59,7 @@ builder.Services.AddKafka(kafka =>
     });
 });
 
-var app = builder.Build();
-var bus = app.Services.CreateKafkaBus();
-await bus.StartAsync();
-app.Run();
-await bus.StopAsync();
+await builder.RunShopneticMicroserviceAsync();
 
 internal class OrderVerifedHandler : IMessageHandler<IntegrationEvent<OrderVerified>>
 {
