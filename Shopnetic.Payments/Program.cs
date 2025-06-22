@@ -3,6 +3,7 @@ using KafkaFlow;
 using Shopnetic.Shared.Database;
 using Shopnetic.Shared.Infrastructure;
 using Shopnetic.Shared.DomainEvents;
+using Shopnetic.Shared.DomainEvents.Inventory;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>()!;
@@ -19,7 +20,7 @@ builder.Services.AddKafka(kafka =>
         .AddConsumer(consumer =>
         {
             consumer
-            .Topic(TopicNames.Payments)
+            .Topic(TopicNames.Inventory)
             .WithGroupId("payments-group")
             .WithWorkersCount(1)
             .WithBufferSize(100)
@@ -28,15 +29,12 @@ builder.Services.AddKafka(kafka =>
                 middlewares.AddShopneticConsumerMiddleware();
                 middlewares.AddTypedHandlers(handlers =>
                 {
-                    handlers.WithHandlerLifetime(InstanceLifetime.Transient);
-                    //.AddHandler<AddToCartHandler>()
-                    //.AddHandler<CartCreatedHandler>()
-                    //.AddHandler<RemoveFromCartHandler>()
-                    //.AddHandler<UpdateCartItemQuantityHandler>();
+                    handlers.WithHandlerLifetime(InstanceLifetime.Transient)
+                        .AddHandler<InventoryReservedHandler>();
                 });
             });
         })
-        .AddShopneticProducer(ProducerNames.PaymentsToOrderOutput, TopicNames.Order);
+        .AddShopneticProducer(ProducerNames.PaymentsToPaymentsLoopback, TopicNames.Payments);
     });
 });
 
@@ -45,3 +43,12 @@ var bus = app.Services.CreateKafkaBus();
 await bus.StartAsync();
 app.Run();
 await bus.StopAsync();
+
+internal class InventoryReservedHandler : IMessageHandler<IntegrationEvent<InventoryReserved>>
+{
+    public Task Handle(IMessageContext context, IntegrationEvent<InventoryReserved> message)
+    {
+        // start payment flow, emit payment succeeded or payment failed
+        throw new NotImplementedException();
+    }
+}

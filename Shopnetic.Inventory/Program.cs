@@ -37,7 +37,9 @@ builder.Services.AddKafka(kafka =>
                         .AddHandler<InventoryConsumedHandler>();
                 });
             });
-
+        })
+        .AddConsumer(consumer =>
+        {
             consumer
             .Topic(TopicNames.Order)
             .WithGroupId("inventory-group")
@@ -49,7 +51,7 @@ builder.Services.AddKafka(kafka =>
                 middlewares.AddTypedHandlers(handlers =>
                 {
                     handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                        .AddHandler<OrderCreatedHandler>();
+                        .AddHandler<OrderVerifedHandler>();
                 });
             });
         })
@@ -63,18 +65,18 @@ await bus.StartAsync();
 app.Run();
 await bus.StopAsync();
 
-internal class OrderCreatedHandler : IMessageHandler<IntegrationEvent<OrderCreated>>
+internal class OrderVerifedHandler : IMessageHandler<IntegrationEvent<OrderVerified>>
 {
     private readonly IMessageProducer _producer;
     private readonly ShopneticDbContext _dbContext;
 
-    public OrderCreatedHandler(IProducerAccessor producers, ShopneticDbContext dbContext)
+    public OrderVerifedHandler(IProducerAccessor producers, ShopneticDbContext dbContext)
     {
         _dbContext = dbContext;
         _producer = producers[ProducerNames.InventoryToInventoryLoopback];
     }
 
-    public Task Handle(IMessageContext context, IntegrationEvent<OrderCreated> message)
+    public Task Handle(IMessageContext context, IntegrationEvent<OrderVerified> message)
     {
         throw new NotImplementedException();
         // emit InventoryReserved of InventoryReservationFailed

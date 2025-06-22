@@ -2,7 +2,7 @@ User enters website (if no session id) -> CartCreated
 User adds items to cart -> ItemsAddedToCart
 User enters shipping and payment details, clicks "Order now" -> Order created
   Order service check order against business rules -> Order verified
-  Inventory checks for stock levels
+    Inventory checks for stock levels
     -> Inventory reserved
     Payments service starts payment processing
       -> Payment succeeded
