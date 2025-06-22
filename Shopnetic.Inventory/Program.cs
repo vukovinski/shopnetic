@@ -19,41 +19,17 @@ builder.Services.AddKafka(kafka =>
     {
         cluster
         .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
-        .AddConsumer(consumer =>
+        .AddShopneticConsumer(TopicNames.Inventory, "inventory-group", handlers =>
         {
-            consumer
-            .Topic(TopicNames.Inventory)
-            .WithGroupId("inventory-group")
-            .WithWorkersCount(1)
-            .WithBufferSize(100)
-            .AddMiddlewares(middlewares =>
-            {
-                middlewares.AddShopneticConsumerMiddleware();
-                middlewares.AddTypedHandlers(handlers =>
-                {
-                    handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                        .AddHandler<InventoryAdjustedHandler>()
-                        .AddHandler<InventoryReleasedHandler>()
-                        .AddHandler<InventoryConsumedHandler>();
-                });
-            });
+            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
+                .AddHandler<InventoryAdjustedHandler>()
+                .AddHandler<InventoryReleasedHandler>()
+                .AddHandler<InventoryConsumedHandler>();
         })
-        .AddConsumer(consumer =>
+        .AddShopneticConsumer(TopicNames.Order, "inventory-group", handlers =>
         {
-            consumer
-            .Topic(TopicNames.Order)
-            .WithGroupId("inventory-group")
-            .WithWorkersCount(1)
-            .WithBufferSize(100)
-            .AddMiddlewares(middlewares =>
-            {
-                middlewares.AddShopneticConsumerMiddleware();
-                middlewares.AddTypedHandlers(handlers =>
-                {
-                    handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                        .AddHandler<OrderVerifedHandler>();
-                });
-            });
+            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
+                .AddHandler<OrderVerifedHandler>();
         })
         .AddShopneticProducer(ProducerNames.InventoryToInventoryLoopback, TopicNames.Inventory);
     });

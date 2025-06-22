@@ -20,56 +20,20 @@ builder.Services.AddKafka(kafka =>
     {
         cluster
         .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
-        .AddConsumer(consumer =>
+        .AddShopneticConsumer(TopicNames.Order, "order-group", handlers =>
         {
-            consumer
-            .Topic(TopicNames.Order)
-            .WithGroupId("order-group")
-            .WithWorkersCount(1)
-            .WithBufferSize(100)
-            .AddMiddlewares(middlewares =>
-            {
-                middlewares.AddShopneticConsumerMiddleware();
-                middlewares.AddTypedHandlers(handlers =>
-                {
-                    handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                        .AddHandler<OrderCreatedHandler>();
-                });
-            });
+            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
+                .AddHandler<OrderCreatedHandler>();
         })
-        .AddConsumer(consumer =>
+        .AddShopneticConsumer(TopicNames.Inventory, "order-group", handlers =>
         {
-            consumer
-            .Topic(TopicNames.Inventory)
-            .WithGroupId("order-group")
-            .WithWorkersCount(1)
-            .WithBufferSize(100)
-            .AddMiddlewares(middlewares =>
-            {
-                middlewares.AddShopneticConsumerMiddleware();
-                middlewares.AddTypedHandlers(handlers =>
-                {
-                    handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                        .AddHandler<InventoryReservationFailedHandler>();
-                });
-            });
+            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
+                .AddHandler<InventoryReservationFailedHandler>();
         })
-        .AddConsumer(consumer =>
+        .AddShopneticConsumer(TopicNames.Payments, "order-group", handlers =>
         {
-            consumer
-            .Topic(TopicNames.Payments)
-            .WithGroupId("order-group")
-            .WithWorkersCount(1)
-            .WithBufferSize(100)
-            .AddMiddlewares(middlewares =>
-            {
-                middlewares.AddShopneticConsumerMiddleware();
-                middlewares.AddTypedHandlers(handlers =>
-                {
-                    handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                        .AddHandler<PaymentSucceededHandler>();
-                });
-            });
+            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
+                .AddHandler<PaymentSucceededHandler>();
         })
         .AddShopneticProducer(ProducerNames.OrderToOrderLoopback, TopicNames.Order);
     });

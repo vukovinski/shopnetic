@@ -17,24 +17,12 @@ builder.Services.AddKafka(kafka =>
     {
         cluster
         .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
-        .AddConsumer(consumer =>
+        .AddShopneticConsumer(TopicNames.Order, "email-group", handlers =>
         {
-            consumer
-            .Topic(TopicNames.Order)
-            .WithGroupId("email-group")
-            .WithWorkersCount(1)
-            .WithBufferSize(100)
-            .AddMiddlewares(middlewares =>
-            {
-                middlewares.AddShopneticConsumerMiddleware();
-                middlewares.AddTypedHandlers(handlers =>
-                {
-                    handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                        .AddHandler<OrderConfirmedHandler>()
-                        .AddHandler<OrderRejectedHandler>()
-                        .AddHandler<OrderShippedHandler>();
-                });
-            });
+            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
+                .AddHandler<OrderConfirmedHandler>()
+                .AddHandler<OrderRejectedHandler>()
+                .AddHandler<OrderShippedHandler>();
         });
     });
 });

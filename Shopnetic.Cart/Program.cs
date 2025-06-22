@@ -17,25 +17,13 @@ builder.Services.AddKafka(kafka =>
     {
         cluster
         .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
-        .AddConsumer(consumer =>
+        .AddShopneticConsumer(TopicNames.Cart, "cart-group", handlers =>
         {
-            consumer
-            .Topic(TopicNames.Cart)
-            .WithGroupId("cart-group")
-            .WithWorkersCount(1)
-            .WithBufferSize(100)
-            .AddMiddlewares(middlewares =>
-            {
-                middlewares.AddShopneticConsumerMiddleware();
-                middlewares.AddTypedHandlers(handlers =>
-                {
-                    handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                        .AddHandler<AddToCartHandler>()
-                        .AddHandler<CartCreatedHandler>()
-                        .AddHandler<RemoveFromCartHandler>()
-                        .AddHandler<UpdateCartItemQuantityHandler>();
-                });
-            });
+            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
+                .AddHandler<AddToCartHandler>()
+                .AddHandler<CartCreatedHandler>()
+                .AddHandler<RemoveFromCartHandler>()
+                .AddHandler<UpdateCartItemQuantityHandler>();
         });
     });
 });

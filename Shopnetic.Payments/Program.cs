@@ -17,22 +17,10 @@ builder.Services.AddKafka(kafka =>
     {
         cluster
         .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
-        .AddConsumer(consumer =>
+        .AddShopneticConsumer(TopicNames.Inventory, "payments-group", handlers =>
         {
-            consumer
-            .Topic(TopicNames.Inventory)
-            .WithGroupId("payments-group")
-            .WithWorkersCount(1)
-            .WithBufferSize(100)
-            .AddMiddlewares(middlewares =>
-            {
-                middlewares.AddShopneticConsumerMiddleware();
-                middlewares.AddTypedHandlers(handlers =>
-                {
-                    handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                        .AddHandler<InventoryReservedHandler>();
-                });
-            });
+            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
+                .AddHandler<InventoryReservedHandler>();
         })
         .AddShopneticProducer(ProducerNames.PaymentsToPaymentsLoopback, TopicNames.Payments);
     });
