@@ -12,5 +12,6 @@
         public bool IsProcessed { get; set; }
 
         public virtual ICollection<OrderItem> OrderItems { get; set; }
+        public virtual ICollection<OrderDiscount> OrderDiscounts { get; set; }
     }
 }
