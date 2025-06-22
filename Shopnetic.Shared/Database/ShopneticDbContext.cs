@@ -32,5 +32,13 @@ namespace Shopnetic.Shared.Database
                 .HasValue<ProductDiscount>("Product")
                 .HasValue<CartDiscount>("Cart");
         }
+
+        public class Payment
+        {
+            public int PaymentId { get; set; }
+            public int CartOwnerId { get; set; }
+            public CartOwner CartOwner { get; set; }
+
+        }
     }
 }

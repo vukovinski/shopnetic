@@ -7,6 +7,6 @@
         public required decimal Price { get; set; }
         public required DateTime EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
-        public required Product Product { get; set; }
+        public Product Product { get; set; }
     }
 }

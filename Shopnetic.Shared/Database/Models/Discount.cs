@@ -11,14 +11,14 @@
     public class ProductDiscount : Discount
     {
         public int ProductId { get; set; }
-        public required Product Product { get; set; }
+        public Product Product { get; set; }
         public required decimal DiscountAmount { get; set; }
     }
 
     public class CartDiscount : Discount
     {
         public int CartId { get; set; }
-        public required Cart Cart { get; set; }
+        public Cart Cart { get; set; }
         public required decimal DiscountAmount { get; set; }
     }
 }
