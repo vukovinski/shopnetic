@@ -19,8 +19,8 @@ builder.Services.AddKafka(kafka =>
         .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
         .AddShopneticConsumer(TopicNames.Inventory, "payments-group", handlers =>
         {
-            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                .AddHandler<InventoryReservedHandler>();
+            handlers
+            .AddHandler<InventoryReservedHandler>();
         })
         .AddShopneticProducer(ProducerNames.PaymentsToPaymentsLoopback, TopicNames.Payments);
     });

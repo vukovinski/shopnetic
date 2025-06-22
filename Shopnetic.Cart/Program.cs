@@ -19,11 +19,11 @@ builder.Services.AddKafka(kafka =>
         .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
         .AddShopneticConsumer(TopicNames.Cart, "cart-group", handlers =>
         {
-            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                .AddHandler<AddToCartHandler>()
-                .AddHandler<CartCreatedHandler>()
-                .AddHandler<RemoveFromCartHandler>()
-                .AddHandler<UpdateCartItemQuantityHandler>();
+            handlers
+            .AddHandler<AddToCartHandler>()
+            .AddHandler<CartCreatedHandler>()
+            .AddHandler<RemoveFromCartHandler>()
+            .AddHandler<UpdateCartItemQuantityHandler>();
         });
     });
 });

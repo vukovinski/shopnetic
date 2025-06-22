@@ -18,15 +18,19 @@ namespace Shopnetic.Shared.Infrastructure
         {
             builder.AddConsumer(consumer =>
             {
-                consumer.Topic(topicName)
-                        .WithGroupId(groupId)
-                        .WithWorkersCount(1)
-                        .WithBufferSize(100)
-                        .AddMiddlewares(middlewares =>
-                        {
-                            middlewares.AddShopneticConsumerMiddleware();
-                            middlewares.AddTypedHandlers(handlerRegistrator);
-                        });
+                consumer
+                .Topic(topicName)
+                .WithGroupId(groupId)
+                .WithWorkersCount(1)
+                .WithBufferSize(100)
+                .AddMiddlewares(middlewares =>
+                {
+                    middlewares.AddShopneticConsumerMiddleware();
+                    middlewares.AddTypedHandlers(handlers =>
+                    {
+                        handlerRegistrator(handlers.WithHandlerLifetime(InstanceLifetime.Transient));
+                    });
+                });
             });
             return builder;
         }

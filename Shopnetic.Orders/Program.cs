@@ -22,18 +22,18 @@ builder.Services.AddKafka(kafka =>
         .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
         .AddShopneticConsumer(TopicNames.Order, "order-group", handlers =>
         {
-            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                .AddHandler<OrderCreatedHandler>();
+            handlers
+            .AddHandler<OrderCreatedHandler>();
         })
         .AddShopneticConsumer(TopicNames.Inventory, "order-group", handlers =>
         {
-            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                .AddHandler<InventoryReservationFailedHandler>();
+            handlers
+            .AddHandler<InventoryReservationFailedHandler>();
         })
         .AddShopneticConsumer(TopicNames.Payments, "order-group", handlers =>
         {
-            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                .AddHandler<PaymentSucceededHandler>();
+            handlers
+            .AddHandler<PaymentSucceededHandler>();
         })
         .AddShopneticProducer(ProducerNames.OrderToOrderLoopback, TopicNames.Order);
     });

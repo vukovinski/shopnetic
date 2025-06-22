@@ -19,10 +19,10 @@ builder.Services.AddKafka(kafka =>
         .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
         .AddShopneticConsumer(TopicNames.Order, "email-group", handlers =>
         {
-            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                .AddHandler<OrderConfirmedHandler>()
-                .AddHandler<OrderRejectedHandler>()
-                .AddHandler<OrderShippedHandler>();
+            handlers
+            .AddHandler<OrderConfirmedHandler>()
+            .AddHandler<OrderRejectedHandler>()
+            .AddHandler<OrderShippedHandler>();
         });
     });
 });

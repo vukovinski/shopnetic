@@ -21,15 +21,15 @@ builder.Services.AddKafka(kafka =>
         .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
         .AddShopneticConsumer(TopicNames.Inventory, "inventory-group", handlers =>
         {
-            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                .AddHandler<InventoryAdjustedHandler>()
-                .AddHandler<InventoryReleasedHandler>()
-                .AddHandler<InventoryConsumedHandler>();
+            handlers
+            .AddHandler<InventoryAdjustedHandler>()
+            .AddHandler<InventoryReleasedHandler>()
+            .AddHandler<InventoryConsumedHandler>();
         })
         .AddShopneticConsumer(TopicNames.Order, "inventory-group", handlers =>
         {
-            handlers.WithHandlerLifetime(InstanceLifetime.Transient)
-                .AddHandler<OrderVerifedHandler>();
+            handlers
+            .AddHandler<OrderVerifedHandler>();
         })
         .AddShopneticProducer(ProducerNames.InventoryToInventoryLoopback, TopicNames.Inventory);
     });
