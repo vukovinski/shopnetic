@@ -2,13 +2,15 @@
 
 namespace Shopnetic.Shared.Database
 {
-    public class ShopneticDbContext : DbContext
+    public partial class ShopneticDbContext : DbContext
     {
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartOwner> CartOwners { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductPrice> ProductPrices { get; set; }
         public DbSet<ProductInventory> ProductInventories { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<PaymentDiscount> PaymentDiscounts { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<DiscountCode> DiscountCodes { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -31,14 +33,6 @@ namespace Shopnetic.Shared.Database
                 .HasDiscriminator<string>("DiscountType")
                 .HasValue<ProductDiscount>("Product")
                 .HasValue<CartDiscount>("Cart");
-        }
-
-        public class Payment
-        {
-            public int PaymentId { get; set; }
-            public int CartOwnerId { get; set; }
-            public CartOwner CartOwner { get; set; }
-
         }
     }
 }
