@@ -41,7 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
         w-64
       `}>
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
-          <h1 className="text-xl font-bold">Admin Panel</h1>
+          <h1 className="text-xl font-bold">Shopnetic Admin</h1>
           <button 
             onClick={onToggle}
             className="md:hidden p-2 hover:bg-gray-800 rounded-lg"

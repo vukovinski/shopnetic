@@ -28,19 +28,19 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
         </div>
         
         <div className="flex items-center gap-4">
-          <button className="p-2 hover:bg-gray-100 rounded-lg relative">
+          {/* <button className="p-2 hover:bg-gray-100 rounded-lg relative">
             <Bell size={20} />
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
               3
             </span>
-          </button>
+          </button> */}
           
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
               <User size={16} className="text-white" />
             </div>
             <span className="text-sm font-medium hidden sm:block">Admin User</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </header>
