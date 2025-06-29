@@ -3,7 +3,6 @@ import {
   LayoutDashboard, 
   ShoppingCart, 
   Package, 
-  Boxes, 
   ShoppingBag,
   Menu,
   X
@@ -21,7 +20,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'orders', label: 'Orders', icon: ShoppingCart },
     { id: 'shipments', label: 'Shipments', icon: Package },
-    { id: 'inventory', label: 'Inventory', icon: Boxes },
     { id: 'products', label: 'Products', icon: ShoppingBag },
   ];
 

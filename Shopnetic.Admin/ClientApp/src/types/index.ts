@@ -29,6 +29,14 @@ export interface Shipment {
   destination: string;
 }
 
+export interface ProductImage {
+  id: string;
+  url: string;
+  alt: string;
+  isPrimary: boolean;
+  order: number;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -38,7 +46,7 @@ export interface Product {
   stock: number;
   lowStockThreshold: number;
   status: 'active' | 'inactive';
-  image?: string;
+  images?: ProductImage[];
   description?: string;
 }
 

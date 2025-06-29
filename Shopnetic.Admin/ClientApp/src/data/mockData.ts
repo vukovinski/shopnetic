@@ -1,4 +1,41 @@
-import { Order, Shipment, Product, InventoryItem } from '../types';
+import { Order, Shipment, Product, InventoryItem, ProductImage } from '../types';
+
+const sampleImages: ProductImage[] = [
+  {
+    id: 'img1',
+    url: 'https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?auto=compress&cs=tinysrgb&w=400',
+    alt: 'Wireless Headphones',
+    isPrimary: true,
+    order: 0
+  },
+  {
+    id: 'img2',
+    url: 'https://images.pexels.com/photos/3394651/pexels-photo-3394651.jpeg?auto=compress&cs=tinysrgb&w=400',
+    alt: 'Wireless Headphones Side View',
+    isPrimary: false,
+    order: 1
+  }
+];
+
+const speakerImages: ProductImage[] = [
+  {
+    id: 'img3',
+    url: 'https://images.pexels.com/photos/3394652/pexels-photo-3394652.jpeg?auto=compress&cs=tinysrgb&w=400',
+    alt: 'Bluetooth Speaker',
+    isPrimary: true,
+    order: 0
+  }
+];
+
+const phoneCaseImages: ProductImage[] = [
+  {
+    id: 'img4',
+    url: 'https://images.pexels.com/photos/3394653/pexels-photo-3394653.jpeg?auto=compress&cs=tinysrgb&w=400',
+    alt: 'Phone Case',
+    isPrimary: true,
+    order: 0
+  }
+];
 
 export const mockOrders: Order[] = [
   {
@@ -76,7 +113,8 @@ export const mockProducts: Product[] = [
     stock: 45,
     lowStockThreshold: 10,
     status: 'active',
-    description: 'Premium wireless headphones with noise cancellation'
+    description: 'Premium wireless headphones with noise cancellation',
+    images: sampleImages
   },
   {
     id: '2',
@@ -87,7 +125,8 @@ export const mockProducts: Product[] = [
     stock: 8,
     lowStockThreshold: 10,
     status: 'active',
-    description: 'Portable Bluetooth speaker with rich sound'
+    description: 'Portable Bluetooth speaker with rich sound',
+    images: speakerImages
   },
   {
     id: '3',
@@ -98,7 +137,8 @@ export const mockProducts: Product[] = [
     stock: 120,
     lowStockThreshold: 20,
     status: 'active',
-    description: 'Protective phone case for various models'
+    description: 'Protective phone case for various models',
+    images: phoneCaseImages
   },
   {
     id: '4',

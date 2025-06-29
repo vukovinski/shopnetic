@@ -6,10 +6,9 @@ import RecentOrders from './components/Dashboard/RecentOrders';
 import OrdersTable from './components/Orders/OrdersTable';
 import OrderEditModal from './components/Orders/OrderEditModal';
 import ShipmentsTable from './components/Shipments/ShipmentsTable';
-import InventoryTable from './components/Inventory/InventoryTable';
 import ProductsTable from './components/Products/ProductsTable';
 import ProductModal from './components/Products/ProductModal';
-import { Order, Product, InventoryItem } from './types';
+import { Order, Product } from './types';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -54,11 +53,6 @@ function App() {
     setSelectedProduct(null);
   };
 
-  const handleAdjustInventory = (item: InventoryItem, adjustment: number) => {
-    // In a real app, this would make an API call
-    console.log(`Adjusting inventory for ${item.productName} by ${adjustment}`);
-  };
-
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
@@ -90,16 +84,6 @@ function App() {
               <p className="text-gray-600">Monitor shipment status and delivery progress</p>
             </div>
             <ShipmentsTable />
-          </div>
-        );
-      case 'inventory':
-        return (
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Inventory Management</h1>
-              <p className="text-gray-600">Track stock levels and manage inventory</p>
-            </div>
-            <InventoryTable onAdjustInventory={handleAdjustInventory} />
           </div>
         );
       case 'products':

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Edit, Package, Plus } from 'lucide-react';
+import { Search, Edit, Package, Plus, Image as ImageIcon } from 'lucide-react';
 import { Product } from '../../types';
 import { mockProducts } from '../../data/mockData';
 
@@ -45,6 +45,11 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ onEditProduct, onAddProdu
       }
       return product;
     }));
+  };
+
+  const getPrimaryImage = (product: Product) => {
+    if (!product.images || product.images.length === 0) return null;
+    return product.images.find(img => img.isPrimary) || product.images[0];
   };
 
   return (
@@ -101,72 +106,84 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ onEditProduct, onAddProdu
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {filteredProducts.map((product) => (
-              <tr key={product.id} className="hover:bg-gray-50">
-                <td className="py-4 px-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <Package size={24} className="text-gray-500" />
+            {filteredProducts.map((product) => {
+              const primaryImage = getPrimaryImage(product);
+              
+              return (
+                <tr key={product.id} className="hover:bg-gray-50">
+                  <td className="py-4 px-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                        {primaryImage ? (
+                          <img
+                            src={primaryImage.url}
+                            alt={primaryImage.alt}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <ImageIcon size={24} className="text-gray-400" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{product.name}</p>
+                        {product.description && (
+                          <p className="text-sm text-gray-500 truncate max-w-xs">
+                            {product.description}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{product.name}</p>
-                      {product.description && (
-                        <p className="text-sm text-gray-500 truncate max-w-xs">
-                          {product.description}
-                        </p>
-                      )}
+                  </td>
+                  <td className="py-4 px-6">
+                    <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+                      {product.sku}
+                    </span>
+                  </td>
+                  <td className="py-4 px-6">
+                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                      {product.category}
+                    </span>
+                  </td>
+                  <td className="py-4 px-6 font-medium text-gray-900">
+                    ${product.price.toFixed(2)}
+                  </td>
+                  <td className="py-4 px-6">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-gray-900">{product.stock}</span>
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => handleStockAdjustment(product.id, -1)}
+                          className="w-6 h-6 text-red-600 hover:bg-red-50 rounded flex items-center justify-center text-xs font-bold"
+                          disabled={product.stock <= 0}
+                        >
+                          -
+                        </button>
+                        <button
+                          onClick={() => handleStockAdjustment(product.id, 1)}
+                          className="w-6 h-6 text-emerald-600 hover:bg-emerald-50 rounded flex items-center justify-center text-xs font-bold"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td className="py-4 px-6">
-                  <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
-                    {product.sku}
-                  </span>
-                </td>
-                <td className="py-4 px-6">
-                  <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                    {product.category}
-                  </span>
-                </td>
-                <td className="py-4 px-6 font-medium text-gray-900">
-                  ${product.price.toFixed(2)}
-                </td>
-                <td className="py-4 px-6">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-900">{product.stock}</span>
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => handleStockAdjustment(product.id, -1)}
-                        className="w-6 h-6 text-red-600 hover:bg-red-50 rounded flex items-center justify-center text-xs font-bold"
-                        disabled={product.stock <= 0}
-                      >
-                        -
-                      </button>
-                      <button
-                        onClick={() => handleStockAdjustment(product.id, 1)}
-                        className="w-6 h-6 text-emerald-600 hover:bg-emerald-50 rounded flex items-center justify-center text-xs font-bold"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                </td>
-                <td className="py-4 px-6">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStockStatusColor(product.stock, product.lowStockThreshold)}`}>
-                    {getStockStatus(product.stock, product.lowStockThreshold)}
-                  </span>
-                </td>
-                <td className="py-4 px-6">
-                  <button
-                    onClick={() => onEditProduct(product)}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                    title="Edit Product"
-                  >
-                    <Edit size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="py-4 px-6">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStockStatusColor(product.stock, product.lowStockThreshold)}`}>
+                      {getStockStatus(product.stock, product.lowStockThreshold)}
+                    </span>
+                  </td>
+                  <td className="py-4 px-6">
+                    <button
+                      onClick={() => onEditProduct(product)}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Edit Product"
+                    >
+                      <Edit size={16} />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
