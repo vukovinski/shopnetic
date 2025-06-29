@@ -11,27 +11,23 @@ var builder = WebApplication.CreateBuilder(args);
 var config = KafkaOptions.ConfigureAndValidate(builder.Configuration);
 
 builder.Services.AddShopneticDbContext(builder.Configuration);
-builder.Services.AddKafka(kafka =>
+builder.Services.AddShopneticKafka(cluster =>
 {
-    kafka.UseMicrosoftLog();
-    kafka.AddCluster(cluster =>
+    cluster
+    .AddShopneticBrokers(config)
+    .AddShopneticConsumer(TopicNames.Inventory, "inventory-group", handlers =>
     {
-        cluster
-        .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
-        .AddShopneticConsumer(TopicNames.Inventory, "inventory-group", handlers =>
-        {
-            handlers
-            .AddHandler<InventoryAdjustedHandler>()
-            .AddHandler<InventoryReleasedHandler>()
-            .AddHandler<InventoryConsumedHandler>();
-        })
-        .AddShopneticConsumer(TopicNames.Order, "inventory-group", handlers =>
-        {
-            handlers
-            .AddHandler<OrderVerifedHandler>();
-        })
-        .AddShopneticProducer(ProducerNames.InventoryToInventoryLoopback, TopicNames.Inventory);
-    });
+        handlers
+        .AddHandler<InventoryAdjustedHandler>()
+        .AddHandler<InventoryReleasedHandler>()
+        .AddHandler<InventoryConsumedHandler>();
+    })
+    .AddShopneticConsumer(TopicNames.Order, "inventory-group", handlers =>
+    {
+        handlers
+        .AddHandler<OrderVerifedHandler>();
+    })
+    .AddShopneticProducer(ProducerNames.InventoryToInventoryLoopback, TopicNames.Inventory);
 });
 
 await builder.RunShopneticMicroserviceAsync();

@@ -9,20 +9,16 @@ var builder = WebApplication.CreateBuilder(args);
 var config = KafkaOptions.ConfigureAndValidate(builder.Configuration);
 
 builder.Services.AddShopneticDbContext(builder.Configuration);
-builder.Services.AddKafka(kafka =>
+builder.Services.AddShopneticKafka(cluster =>
 {
-    kafka.UseMicrosoftLog();
-    kafka.AddCluster(cluster =>
+    cluster
+    .AddShopneticBrokers(config)
+    .AddShopneticConsumer(TopicNames.Order, "email-group", handlers =>
     {
-        cluster
-        .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
-        .AddShopneticConsumer(TopicNames.Order, "email-group", handlers =>
-        {
-            handlers
-            .AddHandler<OrderConfirmedHandler>()
-            .AddHandler<OrderRejectedHandler>()
-            .AddHandler<OrderShippedHandler>();
-        });
+        handlers
+        .AddHandler<OrderConfirmedHandler>()
+        .AddHandler<OrderRejectedHandler>()
+        .AddHandler<OrderShippedHandler>();
     });
 });
 

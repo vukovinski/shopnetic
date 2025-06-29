@@ -12,30 +12,26 @@ var builder = WebApplication.CreateBuilder(args);
 var config = KafkaOptions.ConfigureAndValidate(builder.Configuration);
 
 builder.Services.AddShopneticDbContext(builder.Configuration);
-builder.Services.AddKafka(kafka =>
+builder.Services.AddShopneticKafka(cluster =>
 {
-    kafka.UseMicrosoftLog();
-    kafka.AddCluster(cluster =>
+    cluster
+    .AddShopneticBrokers(config)
+    .AddShopneticConsumer(TopicNames.Order, "order-group", handlers =>
     {
-        cluster
-        .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
-        .AddShopneticConsumer(TopicNames.Order, "order-group", handlers =>
-        {
-            handlers
-            .AddHandler<OrderCreatedHandler>();
-        })
-        .AddShopneticConsumer(TopicNames.Inventory, "order-group", handlers =>
-        {
-            handlers
-            .AddHandler<InventoryReservationFailedHandler>();
-        })
-        .AddShopneticConsumer(TopicNames.Payments, "order-group", handlers =>
-        {
-            handlers
-            .AddHandler<PaymentSucceededHandler>();
-        })
-        .AddShopneticProducer(ProducerNames.OrderToOrderLoopback, TopicNames.Order);
-    });
+        handlers
+        .AddHandler<OrderCreatedHandler>();
+    })
+    .AddShopneticConsumer(TopicNames.Inventory, "order-group", handlers =>
+    {
+        handlers
+        .AddHandler<InventoryReservationFailedHandler>();
+    })
+    .AddShopneticConsumer(TopicNames.Payments, "order-group", handlers =>
+    {
+        handlers
+        .AddHandler<PaymentSucceededHandler>();
+    })
+    .AddShopneticProducer(ProducerNames.OrderToOrderLoopback, TopicNames.Order);
 });
 
 await builder.RunShopneticMicroserviceAsync();

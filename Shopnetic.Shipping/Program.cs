@@ -8,32 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 var config = KafkaOptions.ConfigureAndValidate(builder.Configuration);
 
 builder.Services.AddShopneticDbContext(builder.Configuration);
-builder.Services.AddKafka(kafka =>
+builder.Services.AddShopneticKafka(cluster =>
 {
-    kafka.UseMicrosoftLog();
-    kafka.AddCluster(cluster =>
+    cluster
+    .AddShopneticBrokers(config)
+    .AddShopneticConsumer(TopicNames.Shipping, "shipping-group", handlers =>
     {
-        cluster
-        .WithBrokers([config.KafkaBroker1, config.KafkaBroker2, config.KafkaBroker3])
-        .AddConsumer(consumer =>
-        {
-            consumer
-            .Topic(TopicNames.Shipping)
-            .WithGroupId("shipping-group")
-            .WithWorkersCount(1)
-            .WithBufferSize(100)
-            .AddMiddlewares(middlewares =>
-            {
-                middlewares.AddShopneticConsumerMiddleware();
-                middlewares.AddTypedHandlers(handlers =>
-                {
-                    //handlers.WithHandlerLifetime(InstanceLifetime.Singleton)
-                    //    .AddHandler<AddToCartHandler>()
-                    //    .AddHandler<RemoveFromCartHandler>()
-                    //    .AddHandler<UpdateCartItemQuantityHandler>();
-                });
-            });
-        });
+        //handlers
+        //.AddHandler<AddToCartHandler>()
+        //.AddHandler<RemoveFromCartHandler>()
+        //.AddHandler<UpdateCartItemQuantityHandler>();
     });
 });
 

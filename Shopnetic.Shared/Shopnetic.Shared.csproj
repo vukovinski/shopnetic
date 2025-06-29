@@ -21,6 +21,7 @@
     <PackageReference Include="KafkaFlow" Version="4.0.0" />
     <PackageReference Include="KafkaFlow.Abstractions" Version="4.0.0" />
     <PackageReference Include="KafkaFlow.Compressor.Gzip" Version="4.0.0" />
+    <PackageReference Include="KafkaFlow.LogHandler.Microsoft" Version="4.0.0" />
     <PackageReference Include="KafkaFlow.Microsoft.DependencyInjection" Version="4.0.0" />
     <PackageReference Include="KafkaFlow.Serializer.ProtobufNet" Version="4.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
