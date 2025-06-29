@@ -15,6 +15,15 @@
                 throw new ApplicationException("KafkaOptions not configured properly.");
         }
 
+        public static KafkaOptions ConfigureAndValidate(IConfiguration configuration)
+        {
+            var kafkaOptions = configuration.GetSection("KafkaOptions").Get<KafkaOptions>();
+            if (kafkaOptions == null)
+                throw new ApplicationException("KafkaOptions section not found in configuration.");
+            Validate(kafkaOptions);
+            return kafkaOptions;
+        }
+
         private static bool IsValidHostname(string hostname)
         {
             return Uri.CheckHostName(hostname) != UriHostNameType.Unknown;

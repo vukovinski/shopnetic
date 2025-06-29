@@ -5,8 +5,7 @@ using Shopnetic.Shared.Infrastructure;
 using Shopnetic.Shared.DomainEvents.Order;
 
 var builder = WebApplication.CreateBuilder(args);
-var config = builder.Configuration.GetSection("KafkaOptions").Get<KafkaOptions>()!;
-KafkaOptions.Validate(config);
+var config = KafkaOptions.ConfigureAndValidate(builder.Configuration);
 
 builder.Services.AddShopneticDbContext(builder.Configuration);
 builder.Services.AddKafka(kafka =>
