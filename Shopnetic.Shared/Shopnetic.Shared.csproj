@@ -7,17 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DomainEvents\Email\**" />
+    <Compile Remove="DomainEvents\Shipping\**" />
+    <Content Remove="DomainEvents\Email\**" />
+    <Content Remove="DomainEvents\Shipping\**" />
+    <EmbeddedResource Remove="DomainEvents\Email\**" />
+    <EmbeddedResource Remove="DomainEvents\Shipping\**" />
+    <None Remove="DomainEvents\Email\**" />
+    <None Remove="DomainEvents\Shipping\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="KafkaFlow" Version="4.0.0" />
     <PackageReference Include="KafkaFlow.Abstractions" Version="4.0.0" />
     <PackageReference Include="KafkaFlow.Compressor.Gzip" Version="4.0.0" />
     <PackageReference Include="KafkaFlow.Microsoft.DependencyInjection" Version="4.0.0" />
     <PackageReference Include="KafkaFlow.Serializer.ProtobufNet" Version="4.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DomainEvents\Email\" />
-    <Folder Include="DomainEvents\Shipping\" />
   </ItemGroup>
 
 </Project>
