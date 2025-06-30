@@ -3,7 +3,7 @@ import { X, Upload, Image as ImageIcon, GripVertical, Trash2, Star } from 'lucid
 import { Product, ProductImage } from '../../types';
 
 interface ProductModalProps {
-  product?: Product;
+  product?: Product | null;
   isOpen: boolean;
   onClose: () => void;
   onSave: (product: Omit<Product, 'id'> | Product) => void;
