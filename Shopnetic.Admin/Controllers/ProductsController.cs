@@ -72,6 +72,64 @@ public class ProductsController : ControllerBase
         }
     }
 
+    [HttpGet]
+    [Route("/{productId}")]
+    public async Task<IActionResult> GetProduct(int productId)
+    {
+        try
+        {
+            var now = DateTime.UtcNow;
+            var product = await _context.Products
+                .Include(p => p.ProductPrices)
+                .Include(p => p.ProductInventories)
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductCategories)
+                .FirstOrDefaultAsync(p => p.ProductId == productId);
+            if (product == null) return NotFound();
+            var mappedProduct = new
+            {
+                id = product.ProductId,
+                name = product.ProductName,
+                description = product.ProductDescription,
+                category = new
+                {
+                    categoryId = product.ProductCategories.First().CategoryId,
+                    categoryName = product.ProductCategories.First().Category.CategoryName
+                },
+                currentPrice = new
+                {
+                    price = product.ProductPrices.First(pp =>
+                    {
+                        var effectiveFrom = pp.EffectiveFrom <= now;
+                        var effectiveTo = pp.EffectiveTo == null || pp.EffectiveTo >= now;
+                        var effective = effectiveFrom && effectiveTo;
+                        return effective;
+                    })
+                },
+                inventory = new
+                {
+                    quantity = product.ProductInventories.First().Quantity,
+                    lowStockThreshold = product.ProductInventories.First().LowStockThreshold
+                },
+                status = product.Status,
+                sku = product.Sku,
+                images = product.ProductImages.Select(pi => new
+                {
+                    imageId = pi.ProductImageId,
+                    primary = pi.IsPrimary,
+                    imageUrl = Url.Action(nameof(GetProductImage), new { productImageId = pi.ProductImageId })
+
+                }).ToList()
+            };
+            return Ok(mappedProduct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while retrieving products.");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
     [HttpGet("/productimage/{productImageId}")]
     public async Task<IActionResult> GetProductImage(int productImageId)
     {
