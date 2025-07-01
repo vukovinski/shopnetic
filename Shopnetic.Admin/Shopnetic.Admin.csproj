@@ -17,4 +17,8 @@
     <Folder Include="ClientApp\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Shopnetic.Shared\Shopnetic.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

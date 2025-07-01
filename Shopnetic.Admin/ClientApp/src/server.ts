@@ -1,9 +1,7 @@
-const hostname = "localhost:5001";
-
 export const server = {
     products: {
         addProduct: async (addProductRequest: Product, productImages: ProductImage[]) : Promise<number | void> => {
-            const productId = await fetch(`https://${hostname}/products/create`, {
+            const productId = await fetch(`/api/products/create`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(addProductRequest)
@@ -19,25 +17,31 @@ export const server = {
             }
         },
         getProduct: async (productId: number) : Promise<Product | void> => {
-            return fetch(`https://${hostname}/products/${productId}`)
+            return fetch(`/api/products/${productId}`)
             .then(resp => resp.json())
             .then(data => data as Product)
             .catch(error => console.error(error))
         },
-        editProduct : async (editProductRequest: Product) : Promise<Boolean | void> => {
-            return fetch(`https://${hostname}/products/edit`, {
-                method: 'POST',
+        getProducts: async (): Promise<Product[] | void> => {
+            return fetch(`/api/products`)
+            .then(resp => resp.json())
+            .then(data => data as Product[])
+            .catch(error => console.error(error))
+        },
+        editProduct : async (editProductRequest: Product) : Promise<boolean | void> => {
+            return fetch(`/api/products`, {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(editProductRequest)
             })
             .then(resp => resp.json())
-            .then(data => data as Boolean)
+            .then(data => data as boolean)
             .catch(error => console.error(error))
         },
         saveProductImage : async (productId: number, productImage: ProductImage) : Promise<number | void> => {
             const formData = new FormData();
             formData.append('imageFile', productImage.imageFile);
-            return fetch(`https://${hostname}/products/${productId}/uploadimage?primary=${productImage.primary}`, {
+            return fetch(`/api/products/${productId}/uploadimage?primary=${productImage.primary}`, {
                 method: 'POST',
                 body: formData
             })
@@ -48,7 +52,7 @@ export const server = {
     },
     categories: {
         getCategories: async () : Promise<Category[] | void> => {
-            return fetch(`https://${hostname}/categories`)
+            return fetch(`/api/categories`)
             .then(resp => resp.json())
             .then(data => data as Category[])
             .catch(error => console.error(error))
@@ -56,7 +60,7 @@ export const server = {
     },
     shipments: {
         getShipments: async () : Promise<Shipment[] | void> => {
-            return fetch(`https://${hostname}/shipments`)
+            return fetch(`/api/shipments`)
             .then(resp => resp.json())
             .then(data => data as Shipment[])
             .catch(error => console.error(error))
@@ -64,25 +68,25 @@ export const server = {
     },
     orders: {
         getOrders: async () : Promise<Order[] | void> => {
-            return fetch(`https://${hostname}/orders`)
+            return fetch(`/api/orders`)
             .then(resp => resp.json())
             .then(data => data as Order[])
             .catch(error => console.error(error))
         },
-        editOrder: async (editOrderRequest: Order) : Promise<Boolean | void> => {
-            return fetch(`https://${hostname}/orders/edit`, {
-                method: 'POST',
+        editOrder: async (editOrderRequest: Order) : Promise<boolean | void> => {
+            return fetch(`/api/orders`, {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(editOrderRequest)
             })
             .then(resp => resp.json())
-            .then(data => data as Boolean)
+            .then(data => data as boolean)
             .catch(error => console.error(error))
         }
     },
     dashboard: {
         getDashboardData: async () : Promise<DashboardData | void> => {
-            return fetch(`https://${hostname}/dashboard`)
+            return fetch(`/api/dashboard`)
             .then(resp => resp.json())
             .then(data => data as DashboardData)
             .catch(error => console.error(error))
@@ -95,7 +99,11 @@ interface DashboardData {
     totalRevenue: number,
     totalCustomers: number,
     totalProducts: number,
-    recentOrders: Order[]
+    recentOrders: Order[],
+    ordersPercentChangeMoM: number,
+    revenuePercentChangeMoM: number,
+    productsPercentChangeMoM: number,
+    customersPercentChangeMoM: number
 }
 
 interface Order {
@@ -134,7 +142,7 @@ interface Category {
 
 interface ProductImage {
     imageFile: File,
-    primary: Boolean
+    primary: boolean
 }
 
 interface Product
@@ -157,7 +165,7 @@ interface Product
     sku: string,
     images: [{
         imageId: number,
-        primary: Boolean,
+        primary: boolean,
         imageUrl: string
     }]
 }
