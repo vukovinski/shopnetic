@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="ClientApp\dist\**\*"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="KafkaFlow" Version="4.0.0" />
     <PackageReference Include="KafkaFlow.Compressor.Gzip" Version="4.0.0" />
     <PackageReference Include="KafkaFlow.LogHandler.Microsoft" Version="4.0.0" />

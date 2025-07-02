@@ -40,9 +40,9 @@ function App() {
     setIsProductModalOpen(true);
   };
 
-  const handleSaveProduct = (productData: Omit<Product, 'id'> | Product) => {
+  const handleSaveProduct = async (productData: Omit<Product, 'id'> | Product) => {
     if ('id' in productData) {
-      API.server.products.editProduct({
+      await API.server.products.editProduct({
         id: productData.id,
         name: productData.name,
         description: productData.description ?? '',
@@ -62,7 +62,7 @@ function App() {
         images: productData.images?.map((pi) => ({ imageId: pi.id, primary: pi.isPrimary, imageUrl: pi.url })) ?? []
       })
     } else {
-      API.server.products.addProduct({
+      await API.server.products.addProduct({
         id: -1,
         name: productData.name,
         description: productData.description ?? '',

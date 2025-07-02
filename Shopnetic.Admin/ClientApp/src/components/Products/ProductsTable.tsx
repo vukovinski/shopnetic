@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Edit, Package, Plus, Image as ImageIcon } from 'lucide-react';
 import { Product } from '../../types';
 import { mockProducts } from '../../data/mockData';
+import * as API from '../../server';
 
 interface ProductsTableProps {
   onEditProduct: (product: Product) => void;
@@ -21,7 +22,7 @@ const getStockStatus = (stock: number, threshold: number) => {
 };
 
 const ProductsTable: React.FC<ProductsTableProps> = ({ onEditProduct, onAddProduct }) => {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
@@ -33,9 +34,31 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ onEditProduct, onAddProdu
     return matchesSearch && matchesCategory;
   });
 
+  useEffect(() => {
+    API.server.products.getProducts()
+      .then(prducts => {
+        if (prducts) {
+          const productsMapped = prducts.map<Product>(p => ({
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            sku: p.sku,
+            price: p.currentPrice.price,
+            category: p.category.categoryName,
+            categoryId: p.category.categoryId,
+            stock: p.inventory.quantity,
+            lowStockThreshold: p.inventory.lowStockThreshold,
+            status: p.status,
+            images: []
+          }));
+          setProducts(productsMapped);
+        }
+    })
+  }, []);
+
   const categories = Array.from(new Set(products.map(p => p.category)));
 
-  const handleStockAdjustment = (productId: string, adjustment: number) => {
+  const handleStockAdjustment = (productId: number, adjustment: number) => {
     setProducts(prev => prev.map(product => {
       if (product.id === productId) {
         return {
