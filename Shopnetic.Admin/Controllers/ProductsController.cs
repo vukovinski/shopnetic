@@ -10,12 +10,11 @@ using Shopnetic.Shared.Database;
 public class ProductsController : ControllerBase
 {
     private readonly ShopneticDbContext _context;
-    private readonly IProducerAccessor _producers;
+    //private readonly IProducerAccessor _producers;
     private readonly ILogger<ProductsController> _logger;
 
-    public ProductsController(ShopneticDbContext context, IProducerAccessor producers, ILogger<ProductsController> logger)
+    public ProductsController(ShopneticDbContext context, ILogger<ProductsController> logger)
     {
-        _producers = producers;
         _context = context;
         _logger = logger;
     }
