@@ -10,7 +10,7 @@ export const server = {
         .then(data => data as number)
         .catch(error => console.error(error));
 
-      if (productId) {
+      if (productId && productId > 0) {
         productImages.forEach(async (productImage) => {
           await server.products.saveProductImage(productId, productImage)
         });

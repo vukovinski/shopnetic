@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="KafkaFlow" Version="4.0.0" />
+    <PackageReference Include="KafkaFlow.Compressor.Gzip" Version="4.0.0" />
+    <PackageReference Include="KafkaFlow.LogHandler.Microsoft" Version="4.0.0" />
+    <PackageReference Include="KafkaFlow.Microsoft.DependencyInjection" Version="4.0.0" />
+    <PackageReference Include="KafkaFlow.Serializer.ProtobufNet" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1-Preview.1" />
   </ItemGroup>
