@@ -94,7 +94,7 @@ export const server = {
   }
 }
 
-interface DashboardData {
+export interface DashboardData {
   totalOrders: number,
   totalRevenue: number,
   totalCustomers: number,
@@ -106,7 +106,7 @@ interface DashboardData {
   customersPercentChangeMoM: number
 }
 
-interface Order {
+export interface Order {
   orderId: number,
   customerName: string,
   orderDate: Date,
@@ -115,7 +115,7 @@ interface Order {
   items: OrderItem[]
 }
 
-interface OrderItem {
+export interface OrderItem {
   orderItemId: number,
   productId: number,
   productName: string,
@@ -123,7 +123,7 @@ interface OrderItem {
   price: number
 }
 
-interface Shipment {
+export interface Shipment {
   shipmentId: number,
   orderId: number,
   trackingNumber: string,
@@ -135,17 +135,17 @@ interface Shipment {
 }
 
 
-interface Category {
+export interface Category {
   categoryId: number,
   categoryName: string
 }
 
-interface ProductImage {
+export interface ProductImage {
   imageFile: File,
   primary: boolean
 }
 
-interface Product {
+export interface Product {
   id: number,
   name: string,
   description: string
@@ -162,9 +162,12 @@ interface Product {
   }
   status: 'Active' | 'Inactive',
   sku: string,
-  images: [{
-    imageId: number,
-    primary: boolean,
-    imageUrl: string
-  }]
+  images: ProductImageInfo[]
+}
+
+export interface ProductImageInfo
+{
+  imageId: number,
+  primary: boolean,
+  imageUrl: string
 }

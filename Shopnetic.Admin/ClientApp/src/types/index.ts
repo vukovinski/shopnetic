@@ -30,22 +30,24 @@ export interface Shipment {
 }
 
 export interface ProductImage {
-  id: string;
+  id: number;
   url: string;
   alt: string;
   isPrimary: boolean;
   order: number;
+  contents: File;
 }
 
 export interface Product {
-  id: string;
+  id: number;
   name: string;
   sku: string;
   price: number;
   category: string;
+  categoryId: number;
   stock: number;
   lowStockThreshold: number;
-  status: 'active' | 'inactive';
+  status: 'Active' | 'Inactive';
   images?: ProductImage[];
   description?: string;
 }

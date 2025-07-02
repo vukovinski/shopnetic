@@ -20,9 +20,10 @@ const ProductModal: React.FC<ProductModalProps> = ({
     sku: '',
     price: 0,
     category: '',
+    categoryId: -1,
     stock: 0,
     lowStockThreshold: 10,
-    status: 'active',
+    status: 'Active',
     description: '',
     images: []
   });
@@ -37,6 +38,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
         sku: product.sku,
         price: product.price,
         category: product.category,
+        categoryId: product.categoryId,
         stock: product.stock,
         lowStockThreshold: product.lowStockThreshold,
         status: product.status,
@@ -49,9 +51,10 @@ const ProductModal: React.FC<ProductModalProps> = ({
         sku: '',
         price: 0,
         category: '',
+        categoryId: -1,
         stock: 0,
         lowStockThreshold: 10,
-        status: 'active',
+        status: 'Active',
         description: '',
         images: []
       });
@@ -67,11 +70,12 @@ const ProductModal: React.FC<ProductModalProps> = ({
         const reader = new FileReader();
         reader.onload = (e) => {
           const newImage: ProductImage = {
-            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+            id: -1,
             url: e.target?.result as string,
             alt: file.name,
             isPrimary: (formData.images?.length || 0) === 0,
-            order: formData.images?.length || 0
+            order: formData.images?.length || 0,
+            contents: file
           };
 
           setFormData(prev => ({
@@ -89,7 +93,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     }
   };
 
-  const handleDeleteImage = (imageId: string) => {
+  const handleDeleteImage = (imageId: number) => {
     const updatedImages = (formData.images || []).filter(img => img.id !== imageId);
     
     // If we deleted the primary image, make the first remaining image primary
@@ -109,7 +113,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     }));
   };
 
-  const handleSetPrimary = (imageId: string) => {
+  const handleSetPrimary = (imageId: number) => {
     const updatedImages = (formData.images || []).map(img => ({
       ...img,
       isPrimary: img.id === imageId
@@ -331,17 +335,17 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 </label>
                 <select
                   required
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  value={formData.categoryId}
+                  onChange={(e) => setFormData({ ...formData, categoryId: Number(e.target.value) })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="">Select category</option>
-                  <option value="Electronics">Electronics</option>
-                  <option value="Accessories">Accessories</option>
-                  <option value="Clothing">Clothing</option>
-                  <option value="Home & Garden">Home & Garden</option>
-                  <option value="Sports">Sports</option>
-                  <option value="Books">Books</option>
+                  <option value="-1">Select category</option>
+                  <option value="1">Electronics</option>
+                  <option value="2">Accessories</option>
+                  <option value="3">Clothing</option>
+                  <option value="4">Home & Garden</option>
+                  <option value="5">Sports</option>
+                  <option value="6">Books</option>
                 </select>
               </div>
 
@@ -397,7 +401,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
               </label>
               <select
                 value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' })}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as 'Active' | 'Inactive' })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="active">Active</option>

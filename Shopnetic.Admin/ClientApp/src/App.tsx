@@ -9,6 +9,7 @@ import ShipmentsTable from './components/Shipments/ShipmentsTable';
 import ProductsTable from './components/Products/ProductsTable';
 import ProductModal from './components/Products/ProductModal';
 import { Order, Product } from './types';
+import * as API from './server';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -40,15 +41,46 @@ function App() {
   };
 
   const handleSaveProduct = (productData: Omit<Product, 'id'> | Product) => {
-    // In a real app, this would make an API call
     if ('id' in productData) {
-      console.log('Updating product:', productData);
+      API.server.products.editProduct({
+        id: productData.id,
+        name: productData.name,
+        description: productData.description ?? '',
+        category: {
+          categoryId: productData.categoryId,
+          categoryName: productData.category
+        },
+        currentPrice: {
+          price: productData.price
+        },
+        inventory: {
+          quantity: productData.stock,
+          lowStockThreshold: productData.lowStockThreshold
+        },
+        status: productData.status,
+        sku: productData.sku,
+        images: productData.images?.map((pi) => ({ imageId: pi.id, primary: pi.isPrimary, imageUrl: pi.url })) ?? []
+      })
     } else {
-      const newProduct = {
-        ...productData,
-        id: Date.now().toString()
-      };
-      console.log('Adding product:', newProduct);
+      API.server.products.addProduct({
+        id: -1,
+        name: productData.name,
+        description: productData.description ?? '',
+        category: {
+          categoryId: productData.categoryId,
+          categoryName: productData.category
+        },
+        currentPrice: {
+          price: productData.price
+        },
+        inventory: {
+          quantity: productData.stock,
+          lowStockThreshold: productData.lowStockThreshold
+        },
+        status: productData.status,
+        sku: productData.sku,
+        images: []
+      }, productData.images?.map(pi => ({ imageFile: pi.contents, primary: pi.isPrimary })) ?? [])
     }
     setSelectedProduct(null);
   };
