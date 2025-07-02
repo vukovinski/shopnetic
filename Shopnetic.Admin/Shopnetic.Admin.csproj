@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,10 +6,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>3806dd3d-3841-4f27-96df-b4b00df12780</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="ClientApp\dist\**\*"/>
+    <EmbeddedResource Include="ClientApp\dist\**\*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +20,8 @@
     <PackageReference Include="KafkaFlow.Microsoft.DependencyInjection" Version="4.0.0" />
     <PackageReference Include="KafkaFlow.Serializer.ProtobufNet" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.6" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1-Preview.1" />
   </ItemGroup>
 
