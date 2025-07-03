@@ -27,7 +27,8 @@ namespace Shopnetic.Admin.Controllers
             {
                 categoryId = c.CategoryId,
                 categoryName = c.CategoryName
-            });
+
+            }).ToList();
             return Ok(categoriesMapped);
         }
     }

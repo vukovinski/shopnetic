@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Shopnetic.Shared.Database;
@@ -11,9 +12,11 @@ using Shopnetic.Shared.Database;
 namespace Shopnetic.Shared.Migrations
 {
     [DbContext(typeof(ShopneticDbContext))]
-    partial class ShopneticDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250703110410_OrderTotal")]
+    partial class OrderTotal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
