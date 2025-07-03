@@ -17,24 +17,28 @@ public class EmbeddedFilesMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var path = context.Request.Path.Value?.TrimStart('/') ?? "index.html";
-        if (string.IsNullOrWhiteSpace(path)) path = "index.html";
-
-        var resourceName = $"Shopnetic.Admin.ClientApp.dist.{path.Replace("/", ".")}";
-
-        using var stream = _assembly.GetManifestResourceStream(resourceName);
-        if (stream == null)
+        if (context.Request.Method == "GET")
         {
-            await _next(context);
-        }
-        else
-        {
-            var fileName = Path.GetFileName(path);
-            if (!_contentTypes.TryGetContentType(fileName, out var contentType))
-                contentType = "application/octet-stream";
+            var path = context.Request.Path.Value?.TrimStart('/') ?? "index.html";
+            if (string.IsNullOrWhiteSpace(path)) path = "index.html";
 
-            context.Response.ContentType = contentType;
-            await stream!.CopyToAsync(context.Response.Body);
+            var resourceName = $"Shopnetic.Admin.ClientApp.dist.{path.Replace("/", ".")}";
+
+            using var stream = _assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
+            {
+                await _next(context);
+            }
+            else
+            {
+                var fileName = Path.GetFileName(path);
+                if (!_contentTypes.TryGetContentType(fileName, out var contentType))
+                    contentType = "application/octet-stream";
+
+                context.Response.ContentType = contentType;
+                await stream!.CopyToAsync(context.Response.Body);
+            }
         }
+        else await _next(context);
     }
 }
