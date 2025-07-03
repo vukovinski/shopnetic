@@ -2,7 +2,7 @@
 
 namespace Shopnetic.Shared.Database
 {
-    public partial class ShopneticDbContext : DbContext
+    public class ShopneticDbContext : DbContext
     {
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartOwner> CartOwners { get; set; }
@@ -12,6 +12,7 @@ namespace Shopnetic.Shared.Database
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Shipment> Shipments { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<DiscountCode> DiscountCodes { get; set; }
         public DbSet<Category> Categories { get; set; }

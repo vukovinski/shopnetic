@@ -10,6 +10,7 @@
         public bool IsShipped { get; set; }
         public bool IsPaid { get; set; }
         public bool IsProcessed { get; set; }
+        public required ShippingAddress ShippingAddress { get; set; }
 
         public virtual ICollection<OrderItem> OrderItems { get; set; }
         public virtual ICollection<OrderDiscount> OrderDiscounts { get; set; }
