@@ -24,9 +24,22 @@ function App() {
     setIsOrderModalOpen(true);
   };
 
-  const handleSaveOrder = (updatedOrder: Order) => {
-    // In a real app, this would make an API call
-    console.log('Saving order:', updatedOrder);
+  const handleSaveOrder = async (updatedOrder: Order) => {
+    await API.server.orders.editOrder({
+      orderId: updatedOrder.id,
+      status: updatedOrder.status,
+      customerName: updatedOrder.customer,
+      orderDate: updatedOrder.date,
+      totalAmount: updatedOrder.total,
+      items: updatedOrder.items.map(item => ({
+        orderItemId: item.id,
+        productName: item.productName,
+        productId: item.productId,
+        quantity: item.quantity,
+        price: item.price,
+        sku: item.sku
+      }))
+    });
     setSelectedOrder(null);
   };
 

@@ -50,7 +50,7 @@ namespace Shopnetic.Admin.Controllers
         public async Task<IActionResult> EditOrder([FromBody] OrderDto order)
         {
             // TODO: edit order
-            return Ok();
+            return Ok(true);
         }
     }
 }
