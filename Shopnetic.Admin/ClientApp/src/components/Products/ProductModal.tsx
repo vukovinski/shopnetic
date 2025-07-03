@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Upload, Image as ImageIcon, GripVertical, Trash2, Star } from 'lucide-react';
 import { Product, ProductImage } from '../../types';
+import * as API from '../../server';
 
 interface ProductModalProps {
   product?: Product | null;
@@ -29,6 +30,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
   });
 
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [categories, setCategories] = useState<API.Category[]>(Array.of());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -60,6 +62,15 @@ const ProductModal: React.FC<ProductModalProps> = ({
       });
     }
   }, [product]);
+
+  useEffect(() => {
+    API.server.categories.getCategories()
+      .then(categories => {
+        if (categories) {
+          setCategories(categories);
+      }
+    })
+  }, []);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -339,13 +350,9 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   onChange={(e) => setFormData({ ...formData, categoryId: Number(e.target.value) })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="-1">Select category</option>
-                  <option value="1">Electronics</option>
-                  <option value="2">Accessories</option>
-                  <option value="3">Clothing</option>
-                  <option value="4">Home & Garden</option>
-                  <option value="5">Sports</option>
-                  <option value="6">Books</option>
+                  {categories && categories.map((cat) => (
+                    <option value={cat.categoryId}>{cat.categoryName}</option>
+                  ))}
                 </select>
               </div>
 
