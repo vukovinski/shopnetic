@@ -23,7 +23,7 @@ namespace Shopnetic.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrders()
         {
-            var orders = await _context.Orders.ToListAsync();
+            var orders = await _context.Orders.Include(o => o.OrderItems).ThenInclude(oi => oi.Product).ToListAsync();
             var mappedOrders = orders.Select(o => new OrderDto
             {
                 orderId = o.OrderId,
@@ -37,7 +37,8 @@ namespace Shopnetic.Admin.Controllers
                     productId = oi.ProductId,
                     productName = oi.Product.ProductName,
                     price = oi.Price,
-                    quantity = oi.Quantity
+                    quantity = oi.Quantity,
+                    sku = oi.Product.Sku
 
                 }).ToList()
 

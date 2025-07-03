@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Edit, Eye, Search, Filter } from 'lucide-react';
 import { Order } from '../../types';
-import { mockOrders } from '../../data/mockData';
+import * as API from '../../server';
 
 interface OrdersTableProps {
   onEditOrder: (order: Order) => void;
@@ -19,17 +19,41 @@ const getStatusColor = (status: string) => {
 };
 
 const OrdersTable: React.FC<OrdersTableProps> = ({ onEditOrder }) => {
-  const [orders] = useState<Order[]>(mockOrders);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = String(order.orderNumber).toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         order.customer.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  useEffect(() => {
+    API.server.orders.getOrders()
+    .then(data => {
+      if (data) {
+        setOrders(data.map(order => ({
+          id: order.orderId,
+          orderNumber: order.orderId,
+          customer: order.customerName,
+          status: order.status,
+          total: order.totalAmount,
+          date: order.orderDate,
+          items: order.items.map(item => ({
+            id: item.orderItemId,
+            productId: item.productId,
+            productName: item.productName,
+            quantity: item.quantity,
+            price: item.price,
+            sku: item.sku
+          })),
+          shippingAddress: order.customerName
+        })));
+      }
+    })
+  }, [])
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100">
@@ -89,7 +113,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ onEditOrder }) => {
                 <td className="py-4 px-6">
                   <div>
                     <p className="font-medium text-gray-900">{order.customer}</p>
-                    <p className="text-sm text-gray-500">{order.email}</p>
+                    {/* <p className="text-sm text-gray-500">{order.email}</p> */}
                   </div>
                 </td>
                 <td className="py-4 px-6">

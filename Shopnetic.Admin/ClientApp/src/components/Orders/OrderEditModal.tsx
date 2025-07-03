@@ -46,7 +46,7 @@ const OrderEditModal: React.FC<OrderEditModalProps> = ({
               <input
                 type="text"
                 value={editedOrder.orderNumber}
-                onChange={(e) => setEditedOrder({ ...editedOrder, orderNumber: e.target.value })}
+                onChange={(e) => setEditedOrder({ ...editedOrder, orderNumber: Number(e.target.value) })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
@@ -80,7 +80,7 @@ const OrderEditModal: React.FC<OrderEditModalProps> = ({
               />
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Email
               </label>
@@ -90,7 +90,7 @@ const OrderEditModal: React.FC<OrderEditModalProps> = ({
                 onChange={(e) => setEditedOrder({ ...editedOrder, email: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-            </div>
+            </div> */}
           </div>
 
           <div>

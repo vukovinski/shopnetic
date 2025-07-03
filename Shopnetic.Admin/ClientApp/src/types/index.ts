@@ -1,17 +1,16 @@
 export interface Order {
-  id: string;
-  orderNumber: string;
+  id: number;
+  orderNumber: number;
   customer: string;
-  email: string;
   total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  date: string;
+  status: 'Pending' | 'Processing' | 'Shipped' | 'Cancelled';
+  date: Date;
   items: OrderItem[];
   shippingAddress: string;
 }
 
 export interface OrderItem {
-  id: string;
+  id: number;
   productName: string;
   quantity: number;
   price: number;

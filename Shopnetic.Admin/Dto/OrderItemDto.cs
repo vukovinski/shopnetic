@@ -7,4 +7,5 @@ public class OrderItemDto
     public string productName { get; set; }
     public int quantity { get; set; }
     public decimal price { get; set; }
+    public string sku { get; set; }
 }
