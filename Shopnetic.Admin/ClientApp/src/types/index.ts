@@ -35,7 +35,7 @@ export interface ProductImage {
   alt: string;
   isPrimary: boolean;
   order: number;
-  contents: File;
+  contents?: File;
 }
 
 export interface Product {

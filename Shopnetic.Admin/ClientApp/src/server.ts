@@ -29,6 +29,22 @@ export const server = {
         .catch(error => console.error(error))
     },
     editProduct: async (editProductRequest: Product): Promise<boolean | void> => {
+      for (const image of editProductRequest.images) {
+        if (image.imageId < 0) {
+          const productImage: ProductImage = {
+            imageFile: image.contents,
+            primary: image.primary
+          };
+          await server.products.saveProductImage(editProductRequest.id, productImage)
+          .then(imageId => {
+            if (imageId && imageId > 0) {
+              image.imageId = imageId;
+            }
+          })
+          .catch(error => console.error(error));
+        }
+      }
+
       return fetch(`/api/products`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -39,15 +55,17 @@ export const server = {
         .catch(error => console.error(error))
     },
     saveProductImage: async (productId: number, productImage: ProductImage): Promise<number | void> => {
-      const formData = new FormData();
-      formData.append('imageFile', productImage.imageFile);
-      return fetch(`/api/products/${productId}/uploadimage?primary=${productImage.primary}`, {
-        method: 'POST',
-        body: formData
-      })
-        .then(resp => resp.json())
-        .then(data => data as number)
-        .catch(error => console.error(error))
+      if (productImage.imageFile) {
+        const formData = new FormData();
+        formData.append('imageFile', productImage.imageFile);
+        return fetch(`/api/products/${productId}/uploadimage?primary=${productImage.primary}`, {
+          method: 'POST',
+         body: formData
+        })
+          .then(resp => resp.json())
+          .then(data => data as number)
+          .catch(error => console.error(error))
+      }
     }
   },
   categories: {
@@ -141,7 +159,7 @@ export interface Category {
 }
 
 export interface ProductImage {
-  imageFile: File,
+  imageFile?: File,
   primary: boolean
 }
 
@@ -169,5 +187,7 @@ export interface ProductImageInfo
 {
   imageId: number,
   primary: boolean,
-  imageUrl: string
+  imageUrl: string,
+  order: number,
+  contents?: File
 }

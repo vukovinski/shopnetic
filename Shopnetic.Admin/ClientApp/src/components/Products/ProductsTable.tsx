@@ -49,7 +49,13 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ onEditProduct, onAddProdu
             stock: p.inventory.quantity,
             lowStockThreshold: p.inventory.lowStockThreshold,
             status: p.status,
-            images: []
+            images: p.images.map(img => ({
+              id: img.imageId,
+              isPrimary: img.primary,
+              url: img.imageUrl,
+              order: img.order,
+              alt: ''
+            }))
           }));
           setProducts(productsMapped);
         }

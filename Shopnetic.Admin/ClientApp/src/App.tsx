@@ -59,7 +59,7 @@ function App() {
         },
         status: productData.status,
         sku: productData.sku,
-        images: productData.images?.map((pi) => ({ imageId: pi.id, primary: pi.isPrimary, imageUrl: pi.url })) ?? []
+        images: productData.images?.map((pi) => ({ imageId: pi.id, primary: pi.isPrimary, imageUrl: pi.url, order: pi.order, contents: pi.contents })) ?? []
       })
     } else {
       await API.server.products.addProduct({
@@ -80,7 +80,7 @@ function App() {
         status: productData.status,
         sku: productData.sku,
         images: []
-      }, productData.images?.map(pi => ({ imageFile: pi.contents, primary: pi.isPrimary })) ?? [])
+      }, productData.images?.map(pi => ({ imageFile: pi.contents, primary: pi.isPrimary, order: pi.order })) ?? [])
     }
     setSelectedProduct(null);
   };

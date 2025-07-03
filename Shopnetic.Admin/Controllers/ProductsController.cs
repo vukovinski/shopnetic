@@ -30,6 +30,7 @@ public class ProductsController : ControllerBase
                 .Include(p => p.ProductInventories)
                 .Include(p => p.ProductImages)
                 .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Category)
                 .ToListAsync();
             var mappedProducts = products.Select(p => new ProductDto
             {
@@ -77,7 +78,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/{productId}")]
+    [Route("{productId}")]
     public async Task<IActionResult> GetProduct(int productId)
     {
         try
@@ -136,7 +137,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
-    [Route("/create")]
+    [Route("create")]
     public async Task<IActionResult> AddProduct([FromBody] ProductDto product)
     {
         if (product == null) return BadRequest(-1);
@@ -251,12 +252,21 @@ public class ProductsController : ControllerBase
             }
         }
 
+        for (int i = 0; i < existingProduct.ProductImages.Count; i++)
+        {
+            var existingProductImage = existingProduct.ProductImages.ElementAt(i);
+            if (!product.images.Any(pi => pi.imageId == existingProductImage.ProductImageId))
+            {
+                existingProduct.ProductImages.Remove(existingProductImage);
+            }
+        }
+
         await _context.SaveChangesAsync();
         return Ok(true);
     }
 
     [HttpPost]
-    [Route("/{productId}/uploadimage")]
+    [Route("{productId}/uploadimage")]
     public async Task<IActionResult> SaveProductImage(IFormFile imageFile, int productId, [FromQuery] bool primary)
     {
         if (imageFile == null || imageFile.Length == 0) return BadRequest();
@@ -289,7 +299,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/productimage/{productImageId}")]
+    [Route("productimage/{productImageId}")]
     public async Task<IActionResult> GetProductImage(int productImageId)
     {
         try
