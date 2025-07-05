@@ -60,11 +60,11 @@ const OrderEditModal: React.FC<OrderEditModalProps> = ({
                 onChange={(e) => setEditedOrder({ ...editedOrder, status: e.target.value as Order['status'] })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="pending">Pending</option>
-                <option value="processing">Processing</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="Created">Created</option>
+                <option value="Verified">Verified</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Shipped">Shipped</option>
               </select>
             </div>
 

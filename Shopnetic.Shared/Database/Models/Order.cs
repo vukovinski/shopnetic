@@ -11,6 +11,7 @@
         public bool IsPaid { get; set; }
         public bool IsProcessed { get; set; }
         public decimal OrderTotal { get; set; }
+        public required string OrderStatus { get; set; }
         public required ShippingAddress ShippingAddress { get; set; }
 
         public virtual ICollection<OrderItem> OrderItems { get; set; }

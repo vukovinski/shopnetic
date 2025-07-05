@@ -3,7 +3,7 @@ export interface Order {
   orderNumber: number;
   customer: string;
   total: number;
-  status: 'Pending' | 'Processing' | 'Shipped' | 'Cancelled';
+  status: 'Created' | 'Verified' | 'Rejected' | 'Confirmed' | 'Shipped';
   date: Date;
   items: OrderItem[];
   shippingAddress: string;

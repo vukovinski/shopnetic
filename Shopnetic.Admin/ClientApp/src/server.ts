@@ -129,7 +129,7 @@ export interface Order {
   customerName: string,
   orderDate: Date,
   totalAmount: number,
-  status: 'Pending' | 'Processing' | 'Shipped' | 'Cancelled',
+  status: 'Created' | 'Verified' | 'Rejected' | 'Confirmed' | 'Shipped',
   items: OrderItem[]
 }
 
