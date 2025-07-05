@@ -19,12 +19,12 @@ export interface OrderItem {
 }
 
 export interface Shipment {
-  id: string;
-  orderNumber: string;
+  id: number;
+  orderNumber: number;
   trackingNumber: string;
   carrier: string;
-  status: 'preparing' | 'shipped' | 'in-transit' | 'delivered';
-  estimatedDelivery: string;
+  status: 'Preparing' | 'Shipped' | 'Delivered' | 'Cancelled';
+  estimatedDelivery: Date;
   customer: string;
   destination: string;
 }

@@ -1,37 +1,56 @@
-import React, { useState } from 'react';
-import { Search, Package, Truck, MapPin } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Package, MapPin, RouteOff } from 'lucide-react';
 import { Shipment } from '../../types';
 import { mockShipments } from '../../data/mockData';
+import * as API from '../../server';
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'delivered': return 'bg-emerald-100 text-emerald-800';
-    case 'in-transit': return 'bg-blue-100 text-blue-800';
-    case 'shipped': return 'bg-yellow-100 text-yellow-800';
-    case 'preparing': return 'bg-gray-100 text-gray-800';
+    case 'Delivered': return 'bg-emerald-100 text-emerald-800';
+    case 'Cancelled': return 'bg-red-100 text-red-800';
+    case 'Shipped': return 'bg-yellow-100 text-yellow-800';
+    case 'Preparing': return 'bg-gray-100 text-gray-800';
     default: return 'bg-gray-100 text-gray-800';
   }
 };
 
 const getStatusIcon = (status: string) => {
   switch (status) {
-    case 'delivered': return <MapPin size={16} className="text-emerald-600" />;
-    case 'in-transit': return <Truck size={16} className="text-blue-600" />;
-    case 'shipped': return <Package size={16} className="text-yellow-600" />;
-    case 'preparing': return <Package size={16} className="text-gray-600" />;
+    case 'Delivered': return <MapPin size={16} className="text-emerald-600" />;
+    case 'Cancelled': return <RouteOff size={16} className="text-red-600" />;
+    case 'Shipped': return <Package size={16} className="text-yellow-600" />;
+    case 'Preparing': return <Package size={16} className="text-gray-600" />;
     default: return <Package size={16} className="text-gray-600" />;
   }
 };
 
 const ShipmentsTable: React.FC = () => {
-  const [shipments] = useState<Shipment[]>(mockShipments);
   const [searchTerm, setSearchTerm] = useState('');
+  const [shipments, setShipments] = useState<Shipment[]>([]);
 
   const filteredShipments = shipments.filter(shipment =>
-    shipment.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    String(shipment.orderNumber).toLowerCase().includes(searchTerm.toLowerCase()) ||
     shipment.trackingNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
     shipment.customer.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  useEffect(() => {
+    API.server.shipments.getShipments()
+      .then(response => {
+        if (response) {
+          setShipments(response.map(shipment => ({
+            id: shipment.shipmentId,
+            orderNumber: shipment.orderId,
+            trackingNumber: shipment.trackingNumber,
+            carrier: 'Postal Service',
+            status: shipment.status,
+            customer: shipment.customer,
+            destination: shipment.destination,
+            estimatedDelivery: shipment.deliveryDate
+          })));
+        }
+      })
+  },[]);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100">
