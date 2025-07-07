@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
 import DashboardCards from './components/Dashboard/DashboardCards';
@@ -14,10 +14,22 @@ import * as API from './server';
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [recentOrders, setRecentOrders] = useState<API.Order[]>([]);
+  const [dashboardData, setDashboardData] = useState<API.DashboardData | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+
+  useEffect(() => {
+    API.server.dashboard.getDashboardData()
+    .then(response => {
+      if (response) {
+        setRecentOrders(response.recentOrders);
+        setDashboardData(response);
+      }
+    })
+  }, []); 
 
   const handleEditOrder = (order: Order) => {
     setSelectedOrder(order);
@@ -107,8 +119,8 @@ function App() {
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Dashboard Overview</h1>
               <p className="text-gray-600">Welcome to your ecommerce admin dashboard</p>
             </div>
-            <DashboardCards />
-            <RecentOrders />
+            <DashboardCards data={dashboardData}/>
+            <RecentOrders orders={recentOrders} />
           </div>
         );
       case 'orders':

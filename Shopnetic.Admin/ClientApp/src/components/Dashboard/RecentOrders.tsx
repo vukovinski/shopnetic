@@ -1,19 +1,19 @@
 import React from 'react';
-import { mockOrders } from '../../data/mockData';
+import { Order } from '../../server';
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'delivered': return 'bg-emerald-100 text-emerald-800';
-    case 'shipped': return 'bg-blue-100 text-blue-800';
-    case 'processing': return 'bg-yellow-100 text-yellow-800';
-    case 'pending': return 'bg-gray-100 text-gray-800';
-    case 'cancelled': return 'bg-red-100 text-red-800';
+    case 'Confirmed': return 'bg-emerald-100 text-emerald-800';
+    case 'Shipped': return 'bg-blue-100 text-blue-800';
+    case 'Verified': return 'bg-yellow-100 text-yellow-800';
+    case 'Created': return 'bg-gray-100 text-gray-800';
+    case 'Rejected': return 'bg-red-100 text-red-800';
     default: return 'bg-gray-100 text-gray-800';
   }
 };
 
-const RecentOrders: React.FC = () => {
-  const recentOrders = mockOrders.slice(0, 5);
+const RecentOrders: React.FC<{ orders: Order[] }> = ({ orders }) => {
+  const recentOrders = orders;
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
@@ -37,14 +37,14 @@ const RecentOrders: React.FC = () => {
           </thead>
           <tbody>
             {recentOrders.map((order) => (
-              <tr key={order.id} className="border-b border-gray-50 hover:bg-gray-50">
+              <tr key={order.orderId} className="border-b border-gray-50 hover:bg-gray-50">
                 <td className="py-3 px-4">
-                  <span className="font-medium text-gray-900">{order.orderNumber}</span>
+                  <span className="font-medium text-gray-900">{order.orderId}</span>
                 </td>
                 <td className="py-3 px-4">
                   <div>
-                    <p className="font-medium text-gray-900">{order.customer}</p>
-                    <p className="text-sm text-gray-500">{order.email}</p>
+                    <p className="font-medium text-gray-900">{order.customerName}</p>
+                    {/* <p className="text-sm text-gray-500">{order.email}</p> */}
                   </div>
                 </td>
                 <td className="py-3 px-4">
@@ -53,10 +53,10 @@ const RecentOrders: React.FC = () => {
                   </span>
                 </td>
                 <td className="py-3 px-4 font-medium text-gray-900">
-                  ${order.total.toFixed(2)}
+                  ${order.totalAmount.toFixed(2)}
                 </td>
                 <td className="py-3 px-4 text-gray-600">
-                  {new Date(order.date).toLocaleDateString()}
+                  {new Date(order.orderDate).toLocaleDateString()}
                 </td>
               </tr>
             ))}
