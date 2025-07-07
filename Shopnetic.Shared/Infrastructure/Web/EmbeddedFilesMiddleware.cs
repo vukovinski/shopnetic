@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 
-namespace Shopnetic.Web;
+namespace Shopnetic.Shared.Infrastructure.Web;
 
 public class EmbeddedFilesMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly Assembly _assembly = Assembly.GetExecutingAssembly();
+    private readonly Assembly _assembly = Assembly.GetEntryAssembly()!;
     private readonly FileExtensionContentTypeProvider _contentTypes = new();
 
     public EmbeddedFilesMiddleware(RequestDelegate next)
