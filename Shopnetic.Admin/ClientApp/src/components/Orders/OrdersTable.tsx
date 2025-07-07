@@ -9,11 +9,11 @@ interface OrdersTableProps {
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'delivered': return 'bg-emerald-100 text-emerald-800';
-    case 'shipped': return 'bg-blue-100 text-blue-800';
-    case 'processing': return 'bg-yellow-100 text-yellow-800';
-    case 'pending': return 'bg-gray-100 text-gray-800';
-    case 'cancelled': return 'bg-red-100 text-red-800';
+    case 'Shipped': return 'bg-emerald-100 text-emerald-800';
+    case 'Confirmed': return 'bg-blue-100 text-blue-800';
+    case 'Verified': return 'bg-yellow-100 text-yellow-800';
+    case 'Created': return 'bg-gray-100 text-gray-800';
+    case 'Rejected': return 'bg-red-100 text-red-800';
     default: return 'bg-gray-100 text-gray-800';
   }
 };
@@ -81,11 +81,11 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ onEditOrder }) => {
                 className="pl-9 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
               >
                 <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="processing">Processing</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="Created">Created</option>
+                <option value="Verified">Verified</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Shipped">Shipped</option>
               </select>
             </div>
           </div>
