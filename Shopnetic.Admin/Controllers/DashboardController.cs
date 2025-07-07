@@ -51,7 +51,7 @@ namespace Shopnetic.Admin.Controllers
                 orderId = o.OrderId,
                 orderDate = o.CreatedAt,
                 customerName = o.ShippingAddress.FullName,
-                status = "Created",
+                status = o.OrderStatus,
                 totalAmount = o.OrderTotal,
                 items = o.OrderItems.Select(oi => new OrderItemDto
                 {
