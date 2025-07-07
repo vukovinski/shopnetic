@@ -6,7 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>2bc03ba5-76e4-4883-998c-3885eb22cf08</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
   </PropertyGroup>
+
+  <ItemGroup>
+	<EmbeddedResource Include="ClientApp\dist\**\*" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="KafkaFlow" Version="4.0.0" />

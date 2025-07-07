@@ -5,9 +5,10 @@ import { Product } from '../types';
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
+  onProductClick: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onProductClick }) => {
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
@@ -23,8 +24,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
     ));
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Prevent opening product details when clicking on action buttons
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    onProductClick(product);
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onAddToCart(product);
+  };
+
   return (
-    <div className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200">
+    <div 
+      className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 cursor-pointer"
+      onClick={handleCardClick}
+    >
       <div className="relative overflow-hidden">
         <img
           src={product.image}
@@ -52,14 +69,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         </div>
 
         {/* Wishlist Button */}
-        <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-50">
+        <button 
+          onClick={(e) => e.stopPropagation()}
+          className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-50"
+        >
           <Heart className="h-4 w-4 text-gray-600 hover:text-red-500 transition-colors duration-200" />
         </button>
 
         {/* Quick Add Button */}
         {product.inStock && (
           <button
-            onClick={() => onAddToCart(product)}
+            onClick={handleAddToCart}
             className="absolute bottom-3 right-3 p-2 bg-blue-600 text-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-blue-700 transform hover:scale-105"
           >
             <Plus className="h-4 w-4" />
@@ -100,7 +120,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
           
           {product.inStock ? (
             <button
-              onClick={() => onAddToCart(product)}
+              onClick={handleAddToCart}
               className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200"
             >
               Add to Cart

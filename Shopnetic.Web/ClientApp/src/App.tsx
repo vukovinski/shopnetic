@@ -6,6 +6,7 @@ import ProductGrid from './components/ProductGrid';
 import FilterSidebar from './components/FilterSidebar';
 import Cart from './components/Cart';
 import Checkout from './components/Checkout';
+import ProductDetails from './components/ProductDetails';
 import { products, categories } from './data/mockData';
 import { CartItem, FilterState, Product } from './types';
 
@@ -14,6 +15,8 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isProductDetailsOpen, setIsProductDetailsOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [filters, setFilters] = useState<FilterState>({
@@ -72,17 +75,17 @@ function App() {
     return filtered;
   }, [searchQuery, selectedCategory, filters]);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: Product, quantity: number = 1) => {
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item.id === product.id);
       if (existingItem) {
         return prevItems.map(item =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...prevItems, { ...product, quantity: 1 }];
+      return [...prevItems, { ...product, quantity }];
     });
   };
 
@@ -110,6 +113,16 @@ function App() {
 
   const clearCategorySelection = () => {
     setSelectedCategory('');
+  };
+
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+    setIsProductDetailsOpen(true);
+  };
+
+  const handleProductDetailsClose = () => {
+    setIsProductDetailsOpen(false);
+    setSelectedProduct(null);
   };
 
   const handleCheckout = () => {
@@ -195,20 +208,21 @@ function App() {
           </div>
 
           {/* Mobile Sidebar */}
-          {/*<FilterSidebar
+          {/* <FilterSidebar
             filters={filters}
             onFiltersChange={setFilters}
             categories={uniqueCategories}
             brands={uniqueBrands}
             isOpen={isFilterOpen}
             onToggle={() => setIsFilterOpen(false)}
-          />*/}
+          /> */}
 
           {/* Main Content */}
           <div className="flex-1">
             <ProductGrid
               products={filteredProducts}
               onAddToCart={handleAddToCart}
+              onProductClick={handleProductClick}
             />
           </div>
         </div>
@@ -229,6 +243,14 @@ function App() {
         isOpen={isCheckoutOpen}
         onClose={handleCheckoutClose}
         cartItems={cartItems}
+      />
+
+      {/* Product Details */}
+      <ProductDetails
+        product={selectedProduct}
+        isOpen={isProductDetailsOpen}
+        onClose={handleProductDetailsClose}
+        onAddToCart={handleAddToCart}
       />
     </div>
   );
