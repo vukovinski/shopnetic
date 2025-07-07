@@ -5,12 +5,14 @@ import CategorySection from './components/CategorySection';
 import ProductGrid from './components/ProductGrid';
 import FilterSidebar from './components/FilterSidebar';
 import Cart from './components/Cart';
+import Checkout from './components/Checkout';
 import { products, categories } from './data/mockData';
 import { CartItem, FilterState, Product } from './types';
 
 function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -108,6 +110,17 @@ function App() {
 
   const clearCategorySelection = () => {
     setSelectedCategory('');
+  };
+
+  const handleCheckout = () => {
+    setIsCartOpen(false);
+    setIsCheckoutOpen(true);
+  };
+
+  const handleCheckoutClose = () => {
+    setIsCheckoutOpen(false);
+    // Clear cart after successful checkout
+    setCartItems([]);
   };
 
   return (
@@ -208,6 +221,14 @@ function App() {
         cartItems={cartItems}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
+        onCheckout={handleCheckout}
+      />
+
+      {/* Checkout */}
+      <Checkout
+        isOpen={isCheckoutOpen}
+        onClose={handleCheckoutClose}
+        cartItems={cartItems}
       />
     </div>
   );

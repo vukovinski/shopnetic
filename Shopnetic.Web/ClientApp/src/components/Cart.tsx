@@ -8,6 +8,7 @@ interface CartProps {
   cartItems: CartItem[];
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveItem: (productId: string) => void;
+  onCheckout: () => void;
 }
 
 const Cart: React.FC<CartProps> = ({
@@ -15,7 +16,8 @@ const Cart: React.FC<CartProps> = ({
   onClose,
   cartItems,
   onUpdateQuantity,
-  onRemoveItem
+  onRemoveItem,
+  onCheckout
 }) => {
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = subtotal * 0.08;
@@ -112,8 +114,11 @@ const Cart: React.FC<CartProps> = ({
                   <span>${total.toFixed(2)}</span>
                 </div>
               </div>
-              <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">
-                Checkout
+              <button 
+                onClick={onCheckout}
+                className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200"
+              >
+                Proceed to Checkout
               </button>
             </div>
           )}
