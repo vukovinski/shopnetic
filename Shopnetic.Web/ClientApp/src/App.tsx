@@ -133,7 +133,7 @@ function App() {
   const handleCheckoutClose = () => {
     setIsCheckoutOpen(false);
     // Clear cart after successful checkout
-    setCartItems([]);
+    // setCartItems([]);
   };
 
   return (
