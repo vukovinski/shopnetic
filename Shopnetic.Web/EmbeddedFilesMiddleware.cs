@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 
-namespace Shopnetic.Shared.Infrastructure.Web;
+namespace Shopnetic.Web;
 
 public class EmbeddedFilesMiddleware
 {

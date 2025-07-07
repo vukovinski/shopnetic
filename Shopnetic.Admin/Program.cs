@@ -1,5 +1,5 @@
+using Shopnetic.Admin;
 using Shopnetic.Shared.Database;
-using Shopnetic.Shared.Infrastructure.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddShopneticDbContext(builder.Configuration);
