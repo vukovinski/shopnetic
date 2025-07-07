@@ -1,4 +1,3 @@
-using Shopnetic.Admin;
 using Shopnetic.Shared.Database;
 using Shopnetic.Shared.Infrastructure.Web;
 
@@ -12,4 +11,3 @@ app.UseMiddleware<EmbeddedFilesMiddleware>();
 app.MapFallbackToFile("index.html");
 app.MapControllers();
 app.Run();
-
