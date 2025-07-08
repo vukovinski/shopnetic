@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, ShoppingCart, User, Menu, X, UserCircle, Package, LogOut, UserPlus, LogIn } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import { CartItem } from '../types';
 
 interface HeaderProps {
@@ -11,8 +13,36 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ cartItems, searchQuery, onSearchChange, onCartClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   
   const cartItemsCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleSignIn = () => {
+    navigate('/signin');
+    setIsUserMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsUserMenuOpen(false);
+  };
+
+  const handleRegister = () => {
+    navigate('/signin');
+    setIsUserMenuOpen(false);
+  };
+
+  const handleProfile = () => {
+    navigate('/profile');
+    setIsUserMenuOpen(false);
+  };
+
+  const handleOrders = () => {
+    navigate('/orders');
+    setIsUserMenuOpen(false);
+  };
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -57,9 +87,90 @@ const Header: React.FC<HeaderProps> = ({ cartItems, searchQuery, onSearchChange,
             </button>
 
             {/* Profile */}
-            <button className="p-2 text-gray-600 hover:text-blue-600 transition-colors duration-200">
-              <User className="h-6 w-6" />
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="p-2 text-gray-600 hover:text-blue-600 transition-colors duration-200 flex items-center gap-1"
+              >
+                <User className="h-6 w-6" />
+                {user && (
+                  <span className="hidden md:block text-sm font-medium text-gray-700">
+                    {user.name.split(' ')[0]}
+                  </span>
+                )}
+              </button>
+
+              {/* User Menu Dropdown */}
+              {isUserMenuOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-10" 
+                    onClick={() => setIsUserMenuOpen(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20">
+                    {user ? (
+                      // Authenticated user menu
+                      <>
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                          <p className="text-sm text-gray-500">{user.email}</p>
+                        </div>
+                        
+                        <button
+                          onClick={handleProfile}
+                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                        >
+                          <UserCircle className="h-4 w-4" />
+                          My Profile
+                        </button>
+                        
+                        <button
+                          onClick={handleOrders}
+                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                        >
+                          <Package className="h-4 w-4" />
+                          My Orders
+                        </button>
+                        
+                        <div className="border-t border-gray-100 mt-2 pt-2">
+                          <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
+                          >
+                            <LogOut className="h-4 w-4" />
+                            Logout
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      // Anonymous user menu
+                      <>
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-sm font-medium text-gray-900">Welcome!</p>
+                          <p className="text-sm text-gray-500">Sign in to access your account</p>
+                        </div>
+                        
+                        <button
+                          onClick={handleSignIn}
+                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                        >
+                          <LogIn className="h-4 w-4" />
+                          Sign In
+                        </button>
+                        
+                        <button
+                          onClick={handleRegister}
+                          className="w-full flex items-center gap-3 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors duration-200"
+                        >
+                          <UserPlus className="h-4 w-4" />
+                          Create Account
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
 
             {/* Mobile Menu Button */}
             <button

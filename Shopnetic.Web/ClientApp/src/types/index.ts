@@ -2,23 +2,15 @@ export interface Product {
   id: string;
   name: string;
   price: number;
-  sku: string;
   originalPrice?: number;
-  images: string[];
+  image: string;
   category: string;
   brand: string;
   rating: number;
   reviewCount: number;
-  reviews: {
-    user: string;
-    comment: string;
-    date: Date;
-    rating: number;
-  }[];
   description: string;
   features: string[];
   inStock: boolean;
-  inventory: number;
   isNew?: boolean;
   isFeatured?: boolean;
 }
@@ -40,4 +32,39 @@ export interface FilterState {
   priceRange: [number, number];
   rating: number;
   inStock: boolean;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  joinDate: string;
+}
+
+export interface Order {
+  id: string;
+  date: string;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  items: CartItem[];
+  subtotal: number;
+  tax: number;
+  shipping: number;
+  total: number;
+  shippingAddress: {
+    name: string;
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  trackingNumber?: string;
 }

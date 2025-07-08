@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Star, Plus, Heart } from 'lucide-react';
 import { Product } from '../types';
 
@@ -9,6 +10,8 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onProductClick }) => {
+  const navigate = useNavigate();
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
@@ -29,7 +32,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onProdu
     if ((e.target as HTMLElement).closest('button')) {
       return;
     }
-    onProductClick(product);
+    navigate(`/product/${product.id}`);
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
