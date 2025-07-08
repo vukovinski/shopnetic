@@ -8,7 +8,7 @@
         public bool Equals(CartItem? other)
         {
             if (other is null) return false;
-            return ProductId == other.ProductId && Quantity == other.Quantity;
+            return ProductId == other.ProductId;
         }
     }
 }

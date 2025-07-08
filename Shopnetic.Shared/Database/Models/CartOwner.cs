@@ -5,6 +5,7 @@
         public int CartOwnerId { get; set; }
         public DateTimeOffset LastSeenAt { get; set; }
         public required string IPAddress { get; set; }
+        public required Guid UserSessionId { get; set; }
 
         public virtual ICollection<Cart> Carts { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
@@ -19,7 +20,5 @@
 
     public class AnonymousCartOwner : CartOwner
     {
-        public required Guid UserSessionId { get; set; }
-        public required UserSession UserSession { get; set; }
     }
 }

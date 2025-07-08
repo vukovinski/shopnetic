@@ -21,7 +21,6 @@ namespace Shopnetic.Shared.Database
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<OrderDiscount> OrderDiscounts { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<UserSession> UserSessions { get; set; }
 
         public ShopneticDbContext(DbContextOptions<ShopneticDbContext> options) : base(options)
         {
