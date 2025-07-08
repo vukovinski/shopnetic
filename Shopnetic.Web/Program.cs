@@ -7,6 +7,7 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseIndexHtmlRedirection();
 app.UseMiddleware<EmbeddedFilesMiddleware>();
 app.MapFallbackToFile("index.html");
 app.MapControllers();

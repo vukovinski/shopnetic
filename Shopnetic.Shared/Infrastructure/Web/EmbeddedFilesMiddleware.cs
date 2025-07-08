@@ -1,44 +1,46 @@
 ﻿using System.Reflection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.FileProviders;
 
 namespace Shopnetic.Shared.Infrastructure.Web;
 
 public class EmbeddedFilesMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly Assembly _assembly = Assembly.GetEntryAssembly()!;
-    private readonly FileExtensionContentTypeProvider _contentTypes = new();
+    private readonly IFileProvider _fileProvider;
 
     public EmbeddedFilesMiddleware(RequestDelegate next)
     {
         _next = next;
+        var assembly = Assembly.GetEntryAssembly()!;
+        _fileProvider = new ManifestEmbeddedFileProvider(assembly, "ClientApp/dist");
     }
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (context.Request.Method == "GET")
+        var path = context.Request.Path.Value?.TrimStart('/');
+
+        if (!string.IsNullOrEmpty(path))
         {
-            var path = context.Request.Path.Value?.TrimStart('/') ?? "index.html";
-            if (string.IsNullOrWhiteSpace(path)) path = "index.html";
+            var fileInfo = _fileProvider.GetFileInfo(path);
 
-            var resourceName = $"Shopnetic.Admin.ClientApp.dist.{path.Replace("/", ".")}";
-
-            using var stream = _assembly.GetManifestResourceStream(resourceName);
-            if (stream == null)
+            if (fileInfo.Exists)
             {
-                await _next(context);
-            }
-            else
-            {
-                var fileName = Path.GetFileName(path);
-                if (!_contentTypes.TryGetContentType(fileName, out var contentType))
-                    contentType = "application/octet-stream";
-
+                var contentType = GetContentType(path);
                 context.Response.ContentType = contentType;
-                await stream!.CopyToAsync(context.Response.Body);
+
+                using var stream = fileInfo.CreateReadStream();
+                await stream.CopyToAsync(context.Response.Body);
+                return;
             }
         }
-        else await _next(context);
+
+        await _next(context);
+    }
+
+    private static string GetContentType(string path)
+    {
+        var provider = new FileExtensionContentTypeProvider();
+        return provider.TryGetContentType(path, out var contentType) ? contentType : "application/octet-stream";
     }
 }
