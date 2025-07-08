@@ -78,7 +78,7 @@ export interface ShippingAndPaymentInfo
     country: string;
   },
   paymentInfo: {
-    fullName?: string;
+    fullName: string;
     creditCardNumber: string;
     cvv: string;
     month: string;
