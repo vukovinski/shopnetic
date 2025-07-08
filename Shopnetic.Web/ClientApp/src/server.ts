@@ -70,6 +70,7 @@ export interface ShippingAndPaymentInfo
   shippingInfo: {
     firstName: string;
     lastName: string;
+    email: string;
     addressLine1: string;
     addressLine2: string;
     apartmentSuiteNumber?: string;
