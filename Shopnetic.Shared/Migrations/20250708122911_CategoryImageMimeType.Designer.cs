@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Shopnetic.Shared.Database;
@@ -11,9 +12,11 @@ using Shopnetic.Shared.Database;
 namespace Shopnetic.Shared.Migrations
 {
     [DbContext(typeof(ShopneticDbContext))]
-    partial class ShopneticDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250708122911_CategoryImageMimeType")]
+    partial class CategoryImageMimeType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -323,14 +326,6 @@ namespace Shopnetic.Shared.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ProductId"));
 
-                    b.Property<string>("Brand")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Features")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("ProductDescription")
                         .IsRequired()
                         .HasColumnType("text");
@@ -459,38 +454,6 @@ namespace Shopnetic.Shared.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductPrices");
-                });
-
-            modelBuilder.Entity("Shopnetic.Shared.Database.ProductReview", b =>
-                {
-                    b.Property<int>("ProductReviewId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ProductReviewId"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("ReviewDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("ReviewRating")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ReviewText")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ReviewerName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("ProductReviewId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductReviews");
                 });
 
             modelBuilder.Entity("Shopnetic.Shared.Database.Shipment", b =>
@@ -863,17 +826,6 @@ namespace Shopnetic.Shared.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Shopnetic.Shared.Database.ProductReview", b =>
-                {
-                    b.HasOne("Shopnetic.Shared.Database.Product", "Product")
-                        .WithMany("ProductReviews")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("Shopnetic.Shared.Database.Shipment", b =>
                 {
                     b.HasOne("Shopnetic.Shared.Database.CartOwner", "CartOwner")
@@ -1010,8 +962,6 @@ namespace Shopnetic.Shared.Migrations
                     b.Navigation("ProductInventories");
 
                     b.Navigation("ProductPrices");
-
-                    b.Navigation("ProductReviews");
                 });
 #pragma warning restore 612, 618
         }

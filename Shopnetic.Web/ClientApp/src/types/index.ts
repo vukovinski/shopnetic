@@ -11,6 +11,8 @@ export interface Product {
   reviewCount: number;
   reviews: {
     user: string;
+    comment: string;
+    date: Date;
     rating: number;
   }[];
   description: string;

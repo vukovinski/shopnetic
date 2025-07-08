@@ -11,6 +11,7 @@ namespace Shopnetic.Shared.Database
         public DbSet<ProductInventory> ProductInventories { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<ProductReview> ProductReviews { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Shipment> Shipments { get; set; }
         public DbSet<Discount> Discounts { get; set; }
