@@ -40,11 +40,18 @@ export const server = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId: cartItem.id, quantity: cartItem.quantity })
       })
+        .then(resp => resp.json())
+        .then(data => data as boolean)
+        .catch(error => console.error(error))
     }
   },
   checkout: {
-    finalizeOrder: async (cartId: number) => {
-      return await fetch(`/api/checkout/finalize/${cartId}`)
+    finalizeOrder: async (cartId: number, shippingAndPaymentInfo: ShippingAndPaymentInfo) => {
+      return await fetch(`/api/checkout/finalize/${cartId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(shippingAndPaymentInfo)
+      })
         .then(resp => resp.json())
         .then(data => data as number)
         .catch(error => console.error(error))
@@ -55,5 +62,26 @@ export const server = {
         .then(data => data as string)
         .catch(error => console.error(error))
     }
+  }
+}
+
+export interface ShippingAndPaymentInfo
+{
+  shippingInfo: {
+    firstName: string;
+    lastName: string;
+    addressLine1: string;
+    addressLine2: string;
+    apartmentSuiteNumber?: string;
+    postalCode: string;
+    city: string;
+    country: string;
+  },
+  paymentInfo: {
+    fullName?: string;
+    creditCardNumber: string;
+    cvv: string;
+    month: string;
+    year: string;
   }
 }
