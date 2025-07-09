@@ -430,7 +430,7 @@ const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose, cartItems }) => {
               {cartItems.map(item => (
                 <div key={item.id} className="flex items-center gap-3">
                   <img
-                    src={item.image}
+                    src={item.images[0]}
                     alt={item.name}
                     className="w-12 h-12 object-cover rounded-lg"
                   />

@@ -55,7 +55,7 @@ const Cart: React.FC<CartProps> = ({
                 {cartItems.map(item => (
                   <div key={item.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
                     <img
-                      src={item.image}
+                      src={item.images[0]}
                       alt={item.name}
                       className="w-16 h-16 object-cover rounded-md"
                     />
