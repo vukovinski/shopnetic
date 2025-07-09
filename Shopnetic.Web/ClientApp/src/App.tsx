@@ -12,8 +12,9 @@ import ProductDetailsPage from './pages/ProductDetails';
 import SignIn from './pages/SignIn';
 import Profile from './pages/Profile';
 import Orders from './pages/Orders';
-import { products, categories } from './data/mockData';
 import { CartItem, FilterState, Product } from './types';
+import { Category } from './types';
+import * as API from './server';
 
 function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -115,6 +116,8 @@ function ShopPage({ cartItems, onAddToCart, onCartClick }: {
   onAddToCart: (product: Product, quantity?: number) => void;
   onCartClick: () => void;
 }) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -126,9 +129,26 @@ function ShopPage({ cartItems, onAddToCart, onCartClick }: {
     inStock: false
   });
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const data = await API.server.categories.getCategories();
+      if (data) {
+        setCategories(data);
+      }
+     };
+    const fetchProducts = async () => {
+      const data = await API.server.products.getProducts();
+      if (data) {
+        setProducts(data);
+      }
+    };
+    fetchCategories();
+    fetchProducts();
+  }, []);
+
   // Get unique categories and brands for filters
-  const uniqueCategories = [...new Set(products.map(p => p.category))];
-  const uniqueBrands = [...new Set(products.map(p => p.brand))];
+  const uniqueCategories = useMemo(() => [...new Set(products.map(p => p.category))], [products]);
+  const uniqueBrands = useMemo(() => [...new Set(products.map(p => p.brand))], [products]);
 
   // Filter products based on search, category, and filters
   const filteredProducts = useMemo(() => {
@@ -172,7 +192,7 @@ function ShopPage({ cartItems, onAddToCart, onCartClick }: {
     }
 
     return filtered;
-  }, [searchQuery, selectedCategory, filters]);
+  }, [searchQuery, selectedCategory, filters, products]);
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
@@ -223,7 +243,7 @@ function ShopPage({ cartItems, onAddToCart, onCartClick }: {
               {searchQuery
                 ? `Search results for "${searchQuery}"`
                 : selectedCategory
-                ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Products`
+                ? `${selectedCategory} Products`
                 : 'Featured Products'
               }
             </h1>

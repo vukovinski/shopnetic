@@ -21,7 +21,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({ categories, onCategor
           {categories.map((category) => (
             <button
               key={category.id}
-              onClick={() => onCategorySelect(category.id)}
+              onClick={() => onCategorySelect(category.name)}
               className="group relative overflow-hidden rounded-xl bg-white shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
             >
               <div className="aspect-square">

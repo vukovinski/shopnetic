@@ -3,9 +3,10 @@ export interface Product {
   name: string;
   price: number;
   originalPrice?: number;
-  image: string;
+  images: string[];
   category: string;
   brand: string;
+  sku: string;
   rating: number;
   reviewCount: number;
   description: string;
@@ -67,4 +68,26 @@ export interface Order {
     country: string;
   };
   trackingNumber?: string;
+}
+
+export interface ShippingAndPaymentInfo
+{
+  shippingInfo: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    addressLine1: string;
+    addressLine2: string;
+    apartmentSuiteNumber?: string;
+    postalCode: string;
+    city: string;
+    country: string;
+  },
+  paymentInfo: {
+    fullName: string;
+    creditCardNumber: string;
+    cvv: string;
+    month: string;
+    year: string;
+  }
 }

@@ -22,13 +22,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
   if (!isOpen || !product) return null;
 
-  // Mock additional images for gallery
-  const productImages = [
-    product.image,
-    product.image, // In a real app, these would be different angles
-    product.image,
-    product.image
-  ];
+  const productImages = product.images;
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -388,7 +382,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       </div>
                       <div className="flex justify-between py-2 border-b border-gray-100">
                         <span className="font-medium text-gray-900">SKU</span>
-                        <span className="text-gray-700">{product.id.toUpperCase()}</span>
+                        <span className="text-gray-700">{product.sku}</span>
                       </div>
                       <div className="flex justify-between py-2 border-b border-gray-100">
                         <span className="font-medium text-gray-900">Availability</span>

@@ -52,7 +52,7 @@ namespace Shopnetic.Web.Controllers
                     rating = pr.ReviewRating
 
                 }).ToList(),
-                features = p.Features.Split(';', StringSplitOptions.None).Select(f => f.Trim()).ToList(),
+                features = p.Features.Split(';', StringSplitOptions.None).ToList(),
                 inStock = p.ProductInventories.First().Quantity >= 0,
                 inventory = p.ProductInventories.First().Quantity,
                 isNew = false,

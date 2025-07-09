@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Star, Plus, Minus, Heart, Share2, Truck, Shield, RotateCcw, Check, ArrowLeft } from 'lucide-react';
 import { Product } from '../types';
-import { products } from '../data/mockData';
 import Header from '../components/Header';
+import * as API from '../server';
 
 interface ProductDetailsPageProps {
   cartItems: any[];
@@ -18,6 +18,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
 }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [products, setProducts] = useState<Product[]>([]);
   const [product, setProduct] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -32,7 +33,17 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
       setProduct(foundProduct || null);
       setLoading(false);
     }
-  }, [id]);
+
+    if (products.length === 0) {
+      const fetchProducts = async () => {
+        const data = await API.server.products.getProducts();
+        if (data) {
+          setProducts(data);
+        }
+      };
+      fetchProducts();
+    }
+  }, [id, products]);
 
   if (loading) {
     return (
@@ -93,24 +104,18 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
   }
 
   // Mock additional images for gallery
-  const productImages = [
-    product.image,
-    product.image, // In a real app, these would be different angles
-    product.image,
-    product.image
-  ];
+  const productImages = product.images;
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`h-5 w-5 ${
-          i < Math.floor(rating)
-            ? 'text-yellow-400 fill-current'
-            : i < rating
+        className={`h-5 w-5 ${i < Math.floor(rating)
+          ? 'text-yellow-400 fill-current'
+          : i < rating
             ? 'text-yellow-400 fill-current opacity-50'
             : 'text-gray-300'
-        }`}
+          }`}
       />
     ));
   };
@@ -223,7 +228,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
                   alt={product.name}
                   className="w-full h-80 lg:h-96 object-cover"
                 />
-                
+
                 {/* Badges */}
                 <div className="absolute top-4 left-4 flex flex-col gap-2">
                   {product.isNew && (
@@ -247,11 +252,10 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
                 <div className="absolute top-4 right-4 flex flex-col gap-2">
                   <button
                     onClick={() => setIsWishlisted(!isWishlisted)}
-                    className={`p-3 rounded-full shadow-lg transition-all duration-200 ${
-                      isWishlisted 
-                        ? 'bg-red-500 text-white' 
-                        : 'bg-white text-gray-600 hover:bg-red-50 hover:text-red-500'
-                    }`}
+                    className={`p-3 rounded-full shadow-lg transition-all duration-200 ${isWishlisted
+                      ? 'bg-red-500 text-white'
+                      : 'bg-white text-gray-600 hover:bg-red-50 hover:text-red-500'
+                      }`}
                   >
                     <Heart className={`h-5 w-5 ${isWishlisted ? 'fill-current' : ''}`} />
                   </button>
@@ -267,11 +271,10 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
                   <button
                     key={index}
                     onClick={() => setSelectedImageIndex(index)}
-                    className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                      selectedImageIndex === index
-                        ? 'border-blue-500 ring-2 ring-blue-200'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                    className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 ${selectedImageIndex === index
+                      ? 'border-blue-500 ring-2 ring-blue-200'
+                      : 'border-gray-200 hover:border-gray-300'
+                      }`}
                   >
                     <img
                       src={image}
@@ -289,7 +292,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
               <div className="mb-6">
                 <p className="text-sm text-blue-600 font-medium mb-2">{product.brand}</p>
                 <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-                
+
                 {/* Rating */}
                 <div className="flex items-center gap-2 mb-4">
                   <div className="flex items-center gap-1">
@@ -391,11 +394,10 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
                 <button
                   key={tab}
                   onClick={() => setSelectedTab(tab)}
-                  className={`px-6 py-3 font-medium text-sm capitalize transition-colors duration-200 border-b-2 ${
-                    selectedTab === tab
-                      ? 'text-blue-600 border-blue-600'
-                      : 'text-gray-500 border-transparent hover:text-gray-700'
-                  }`}
+                  className={`px-6 py-3 font-medium text-sm capitalize transition-colors duration-200 border-b-2 ${selectedTab === tab
+                    ? 'text-blue-600 border-blue-600'
+                    : 'text-gray-500 border-transparent hover:text-gray-700'
+                    }`}
                 >
                   {tab}
                 </button>
@@ -410,27 +412,27 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
                     {product.description}
                   </p>
                   <p className="text-gray-700 leading-relaxed mb-4">
-                    This premium product combines cutting-edge technology with elegant design to deliver 
-                    an exceptional user experience. Crafted with attention to detail and built to last, 
+                    This premium product combines cutting-edge technology with elegant design to deliver
+                    an exceptional user experience. Crafted with attention to detail and built to last,
                     it represents the perfect balance of form and function.
                   </p>
                   <p className="text-gray-700 leading-relaxed mb-4">
-                    Whether you're a professional or enthusiast, this product delivers the performance 
-                    and reliability you need. Every component has been carefully selected and tested to 
+                    Whether you're a professional or enthusiast, this product delivers the performance
+                    and reliability you need. Every component has been carefully selected and tested to
                     ensure maximum durability and optimal performance in any environment.
                   </p>
                   <p className="text-gray-700 leading-relaxed mb-4">
-                    Experience the difference that quality makes. This isn't just another product – 
+                    Experience the difference that quality makes. This isn't just another product –
                     it's a commitment to excellence that you can see and feel in every detail.
                   </p>
                   <p className="text-gray-700 leading-relaxed mb-4">
-                    The innovative design incorporates user feedback and the latest technological advances 
-                    to create a product that not only meets but exceeds expectations. From the moment you 
+                    The innovative design incorporates user feedback and the latest technological advances
+                    to create a product that not only meets but exceeds expectations. From the moment you
                     unbox it, you'll notice the premium materials and meticulous craftsmanship.
                   </p>
                   <p className="text-gray-700 leading-relaxed">
-                    Backed by our comprehensive warranty and dedicated customer support, this product 
-                    represents a smart investment in quality and performance that will serve you well 
+                    Backed by our comprehensive warranty and dedicated customer support, this product
+                    represents a smart investment in quality and performance that will serve you well
                     for years to come.
                   </p>
                 </div>

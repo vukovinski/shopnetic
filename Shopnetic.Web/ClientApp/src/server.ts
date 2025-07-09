@@ -1,4 +1,4 @@
-import { Category, Product, CartItem } from "./types"
+import { Category, Product, CartItem, ShippingAndPaymentInfo } from "./types"
 
 export const server = {
   categories: {
@@ -62,27 +62,5 @@ export const server = {
         .then(data => data as string)
         .catch(error => console.error(error))
     }
-  }
-}
-
-export interface ShippingAndPaymentInfo
-{
-  shippingInfo: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    addressLine1: string;
-    addressLine2: string;
-    apartmentSuiteNumber?: string;
-    postalCode: string;
-    city: string;
-    country: string;
-  },
-  paymentInfo: {
-    fullName: string;
-    creditCardNumber: string;
-    cvv: string;
-    month: string;
-    year: string;
   }
 }
